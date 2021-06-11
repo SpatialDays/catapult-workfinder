@@ -1,0 +1,57 @@
+import logging
+import os
+
+import geopandas as gpd
+from libcatapult.storage.s3_tools import S3Utils
+
+from workfinder import get_config
+
+
+def get_crs():
+    crs = get_config("app", "crs")
+    return {"init": crs}
+
+
+def get_aoi():
+    region = get_config("app", "region")
+    borders = get_world_borders()
+    aoi = borders.loc[borders.NAME == region]
+    if aoi.empty:
+        raise ValueError(f"region \"{region}\" not found in world borders file")
+    envelope = aoi.to_crs(get_crs()).envelope
+    value = envelope.to_crs({"init": "epsg:4326"}).values[0]
+    return value.wkt
+
+
+def get_world_borders():
+    download_world_borders()
+
+    inter_dir = get_config("app", "temp_dir")
+    anc_dir = os.path.join(inter_dir, "ancillary")
+    borders_local = os.path.join(anc_dir, "TM_WORLD_BORDERS.geojson")
+
+    return gpd.read_file(borders_local)
+
+
+def download_world_borders():
+    inter_dir = get_config("app", "temp_dir")
+    anc_dir = os.path.join(inter_dir, "ancillary")
+    os.makedirs(anc_dir, exist_ok=True)
+    os.makedirs(os.path.join(inter_dir, "outputs"), exist_ok=True)
+    anc_dir_rem = 'common_sensing/ancillary_products/'
+    borders_local = os.path.join(anc_dir, "TM_WORLD_BORDERS.geojson")
+    borders_remote = os.path.join(anc_dir_rem, "TM_WORLD_BORDERS/TM_WORLD_BORDERS.geojson")
+
+    if not os.path.exists(borders_local):
+        logging.info(f'Downloading {borders_remote}')
+
+        access_key = get_config("AWS", "access_key_id")
+        secret_key = get_config("AWS", "secret_access_key")
+        bucket = get_config("AWS", "bucket")
+
+        s3_tools = S3Utils(access_key, secret_key, bucket, get_config("AWS", "end_point"),
+                           get_config("AWS", "region"))
+        s3_tools.fetch_file(borders_remote, borders_local)
+        logging.info(f'Downloaded {borders_remote}')
+    else:
+        logging.info(f'{borders_local} already available')
