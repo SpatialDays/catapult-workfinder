@@ -6,7 +6,7 @@ WORKDIR /app/
 
 
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
-    && pip install --no-cache-dir --extra-index-url="https://packages.dea.ga.gov.au" -r requirements.txt
+    && pip install --no-cache-dir -r requirements.txt
 
 RUN conda install --yes \
     -c conda-forge \

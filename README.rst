@@ -3,7 +3,11 @@ workfinder
 ==========
 
 
-find work for the ard processing
+find work for the ard processing.
+
+Run with
+
+`python -m workfinder.workfinder S1`
 
 
 * Free software: Apache Software License 2.0

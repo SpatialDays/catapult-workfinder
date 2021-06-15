@@ -4,6 +4,9 @@ import sys
 
 from workfinder.search.s1 import S1
 
+
+# Mapping of processor names to objects.
+# Note: Names must be upper case.
 processors = {
     "S1": S1()
 }
