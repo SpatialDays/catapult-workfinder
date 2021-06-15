@@ -16,7 +16,10 @@ class S1 (BaseWorkFinder):
     def find_work_list(self):
         aoi = get_aoi()
         region = get_config("app", "region")
-        esa_api = SentinelAPI(get_config("copernicus", "username"), get_config("copernicus", "pwd"))
+        user = get_config("copernicus", "username")
+        pwd = get_config("copernicus", "pwd")
+        logging.info(f"{user} #### {pwd}")
+        esa_api = SentinelAPI(user, pwd)
         res = esa_api.query(
             area=aoi,
             platformname='Sentinel-1',

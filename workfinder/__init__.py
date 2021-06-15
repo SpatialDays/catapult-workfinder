@@ -31,3 +31,4 @@ def get_config(section, key):
 
 logger = logging.getLogger('')
 logger.setLevel(logging.DEBUG)
+logging.getLogger("fiona").setLevel(logging.INFO)
