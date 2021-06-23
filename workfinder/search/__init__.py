@@ -125,3 +125,23 @@ def nats_close():
 
 def nats_publish(topic, message):
     _nc.publish(topic, message)
+
+
+def get_ard_list(folder):
+    path_sizes = list_s3_files(folder)
+    logging.info(f"got {len(path_sizes)} files, for '{folder}'")
+    df_result = pd.DataFrame({'id': [], 'url': []})
+    for r in path_sizes:
+
+        if r['name'].endswith(".yaml"):
+            url = r['name']
+            id = _extract_id_ard_path(url)
+            df_result = df_result.append({'id': id, 'url': url}, ignore_index=True)
+
+    logging.info(f"found {df_result.size} entries")
+    return df_result
+
+
+def _extract_id_ard_path(p: str):
+    parts = Path(os.path.split(p)[0]).stem
+    return parts

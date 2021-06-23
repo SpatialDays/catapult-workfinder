@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 from workfinder import get_config
-from workfinder.search import list_s3_files, nats_connect, nats_publish, nats_close, list_catalog
+from workfinder.search import list_s3_files, nats_connect, nats_publish, nats_close, list_catalog, get_ard_list
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
@@ -22,18 +22,7 @@ class S1ARD (BaseWorkFinder):
 
     def find_work_list(self):
         region = get_config("app", "region")
-        path_sizes = list_s3_files(f"common_sensing/{region.lower()}/sentinel_1/")
-        logging.info(f"got {len(path_sizes)} files, for 'common_sensing/{region.lower()}/sentinel_1'")
-        df_result = pd.DataFrame({'id': [], 'url': []})
-        for r in path_sizes:
-
-            if r['name'].endswith(".yaml"):
-                url = r['name']
-                id = _extract_id_ard_path(url)
-                df_result = df_result.append({'id': id, 'url': url}, ignore_index=True)
-
-        logging.info(f"found {df_result.size} entries")
-        return df_result
+        return get_ard_list(f"common_sensing/{region.lower()}/sentinel_1/")
 
     def find_already_done_list(self):
         stac_key = get_config("s1_ard", "stac_collection_path")

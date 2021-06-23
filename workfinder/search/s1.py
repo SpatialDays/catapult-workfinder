@@ -1,5 +1,7 @@
 import logging
 import math
+import os
+from pathlib import Path
 
 import numpy
 import pandas as pd
@@ -7,7 +9,7 @@ from libcatapult.storage.s3_tools import S3Utils
 from sentinelsat import SentinelAPI
 
 from workfinder import get_config
-from workfinder.search import get_aoi, get_redis_connection, list_s3_files
+from workfinder.search import get_aoi, get_redis_connection, list_s3_files, get_ard_list
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
@@ -57,9 +59,7 @@ class S1 (BaseWorkFinder):
 
     def find_already_done_list(self):
         region = get_config("app", "region")
-        path_sizes = list_s3_files(f'common_sensing/{region}/sentinel_1/')
-
-        return path_sizes
+        return get_ard_list(f"common_sensing/{region.lower()}/sentinel_1/")
 
 
 def get_s1_asf_urls(s1_name_list):
@@ -81,3 +81,8 @@ def get_s1_asf_urls(s1_name_list):
             logging.error(e)
 
     return df.loc[df['Processing Level'] == 'GRD_HD']
+
+
+def _extract_id_ard_path(p: str):
+    parts = Path(os.path.split(p)[0]).stem
+    return parts
