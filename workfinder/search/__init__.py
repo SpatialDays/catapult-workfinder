@@ -115,7 +115,6 @@ def nats_connect():
     }
 
     _nc.connect(**options)
-    logging.info(f"Connected to NATS at {_nc.connected_url.netloc}...")
 
 
 def nats_close():
