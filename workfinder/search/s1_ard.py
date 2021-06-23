@@ -32,8 +32,3 @@ class S1ARD (BaseWorkFinder):
         for r in path_sizes:
             df_result = df_result.append({'id': r}, ignore_index=True)
         return df_result
-
-
-def _extract_id_ard_path(p: str):
-    parts = Path(os.path.split(p)[0]).stem
-    return parts

@@ -81,8 +81,3 @@ def get_s1_asf_urls(s1_name_list):
             logging.error(e)
 
     return df.loc[df['Processing Level'] == 'GRD_HD']
-
-
-def _extract_id_ard_path(p: str):
-    parts = Path(os.path.split(p)[0]).stem
-    return parts
