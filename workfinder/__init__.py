@@ -32,3 +32,5 @@ def get_config(section, key):
 logger = logging.getLogger('')
 logger.setLevel(logging.DEBUG)
 logging.getLogger("fiona").setLevel(logging.INFO)
+logging.getLogger("boto3").setLevel(logging.INFO)
+logging.getLogger("botocore").setLevel(logging.INFO)

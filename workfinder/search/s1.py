@@ -7,11 +7,26 @@ from libcatapult.storage.s3_tools import S3Utils
 from sentinelsat import SentinelAPI
 
 from workfinder import get_config
-from workfinder.search import get_aoi
+from workfinder.search import get_aoi, get_redis_connection, list_s3_files
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
 class S1 (BaseWorkFinder):
+
+    def submit_tasks(self, to_do_list):
+
+        channel = get_config("s1", "redis_channel")
+        # get redis connection
+        conn = get_redis_connection()
+        # submit each task.
+        for e in to_do_list:
+            payload = {
+                "in_scene": e['id'],
+                "s3_bucket": "public-eo-data",
+                "s3_dir": "test/sentinel_1/",
+                "ext_dem": f"common_sensing/ancillary_products/SRTM1Sec/SRTM30_Fiji_{e['hemisphere']}.tif"}
+            conn.publish(channel, payload)
+        pass
 
     def find_work_list(self):
         aoi = get_aoi()
@@ -19,13 +34,16 @@ class S1 (BaseWorkFinder):
         user = get_config("copernicus", "username")
         pwd = get_config("copernicus", "pwd")
         logging.info(f"{user} #### {pwd}")
+
         esa_api = SentinelAPI(user, pwd)
+        print(esa_api.dhus_version)
         res = esa_api.query(
             area=aoi,
             platformname='Sentinel-1',
             producttype='GRD',
             sensoroperationalmode='IW'
         )
+
         esa_grd = esa_api.to_geodataframe(res)
         asf_grd_matches = get_s1_asf_urls(esa_grd.title.values)
 
@@ -39,15 +57,8 @@ class S1 (BaseWorkFinder):
 
     def find_already_done_list(self):
         region = get_config("app", "region")
-        access = get_config("S3", "access_key_id")
-        secret = get_config("S3", "secret_access_key")
-        bucket_name = get_config("S3", "bucket")
-        endpoint_url = get_config("S3", "end_point")
-        s3_region = get_config("S3", "region")
+        path_sizes = list_s3_files(f'common_sensing/{region}/sentinel_1/')
 
-        s3 = S3Utils(access, secret, bucket_name, endpoint_url, s3_region)
-
-        path_sizes = s3.list_files_with_sizes(f'common_sensing/{region}/sentinel_1/')
         return path_sizes
 
 
