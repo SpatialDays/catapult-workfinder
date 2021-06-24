@@ -19,13 +19,20 @@ processors = {
 def main():
     if len(sys.argv) > 1:
         param = sys.argv[1]
-        # TODO: Limit parameter
+
+        limit = -1
+        if len(sys.argv)> 2:
+            limit = int(sys.argv[2])
+
         if param:
             param = param.upper()
             if processors[param]:
                 logging.info(f"starting work search for {param}")
                 work = processors[param].find_new_work()
-                processors[param].submit_tasks(work)
+                if limit > 0:
+                    processors[param].submit_tasks(work.head(limit))
+                else:
+                    processors[param].submit_tasks(work)
                 logging.info(f"done work search for {param}")
             else:
                 print(f"unknown processor type {param}")

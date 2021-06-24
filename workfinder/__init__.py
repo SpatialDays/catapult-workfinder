@@ -40,6 +40,7 @@ logger.setLevel(logging.DEBUG)
 logging.getLogger("fiona").setLevel(logging.INFO)
 logging.getLogger("boto3").setLevel(logging.INFO)
 logging.getLogger("botocore").setLevel(logging.INFO)
+logging.getLogger("urllib3").setLevel(logging.INFO)
 
 
 def get_default_s3_api():
