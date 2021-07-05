@@ -35,12 +35,21 @@ def get_config(section: str, key: str):
     return _config.get(section, key)
 
 
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+console.setFormatter(
+    logging.Formatter('%(asctime)s %(levelname)s %(name)s %(filename)s:%(lineno)s -- %(message)s')
+)
+
 logger = logging.getLogger('')
 logger.setLevel(logging.DEBUG)
 logging.getLogger("fiona").setLevel(logging.INFO)
 logging.getLogger("boto3").setLevel(logging.INFO)
 logging.getLogger("botocore").setLevel(logging.INFO)
 logging.getLogger("urllib3").setLevel(logging.INFO)
+logging.getLogger("s3transfer").setLevel(logging.INFO)
+
+logger.addHandler(console)
 
 
 def get_default_s3_api():

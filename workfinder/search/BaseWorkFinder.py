@@ -57,16 +57,11 @@ def _diff_work_lists(possible: pd.DataFrame, done: pd.DataFrame):
     # This is about the worst possible way to do this.
     # (ok it could be worse)
     # but there should be a better way to do this
-    for index, r in possible.iterrows():
-        found = False
-        for index_j, v in done.iterrows():
-            if v["id"] == r['id']:
-                found = True
-                break
-        if not found:
-            df_result = df_result.append({'id': r['id'], 'url': r['url']}, ignore_index=True)
+
+    df_result = possible[~possible['id'].isin(done['id'])].dropna(how='all')
 
     logging.info(f"found {len(df_result.index)} things to do.")
+    logging.info(df_result)
     return df_result
 
 
