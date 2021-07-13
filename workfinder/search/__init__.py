@@ -3,15 +3,12 @@ import logging
 import os
 from pathlib import Path
 
-import pandas as pd
 import geopandas as gpd
-import redis as redis
-from libcatapult.storage.s3_tools import S3Utils
-
-from nats.aio.client import Client as NATS
+import pandas as pd
 from pystac import Collection
 
 from workfinder import get_config
+from workfinder.api.s3 import S3Api
 
 
 def get_crs():
@@ -19,9 +16,8 @@ def get_crs():
     return {"init": crs}
 
 
-def get_aoi():
-    region = get_config("app", "region")
-    borders = get_world_borders()
+def get_aoi(s3: S3Api, region: str):
+    borders = get_world_borders(s3)
     aoi = borders.loc[borders.NAME == region]
     if aoi.empty:
         raise ValueError(f"region \"{region}\" not found in world borders file")
@@ -30,8 +26,8 @@ def get_aoi():
     return value.wkt
 
 
-def get_world_borders():
-    download_world_borders()
+def get_world_borders(s3: S3Api):
+    download_world_borders(s3)
 
     inter_dir = get_config("app", "temp_dir")
     anc_dir = os.path.join(inter_dir, "ancillary")
@@ -40,7 +36,7 @@ def get_world_borders():
     return gpd.read_file(borders_local)
 
 
-def download_world_borders():
+def download_world_borders(s3: S3Api):
     inter_dir = get_config("app", "temp_dir")
     anc_dir = os.path.join(inter_dir, "ancillary")
     os.makedirs(anc_dir, exist_ok=True)
@@ -51,55 +47,14 @@ def download_world_borders():
 
     if not os.path.exists(borders_local):
         logging.info(f'Downloading {borders_remote}')
-
-        access_key = get_config("AWS", "access_key_id")
-        secret_key = get_config("AWS", "secret_access_key")
-        bucket = get_config("AWS", "bucket")
-
-        s3_tools = S3Utils(access_key, secret_key, bucket, get_config("AWS", "end_point"),
-                           get_config("AWS", "region"))
-        s3_tools.fetch_file(borders_remote, borders_local)
+        s3.fetch_file(borders_remote, borders_local)
         logging.info(f'Downloaded {borders_remote}')
     else:
         logging.info(f'{borders_local} already available')
 
 
-def get_redis_connection():
+def list_catalog(s3: S3Api, collection_path: str):
 
-    host = get_config("redis", "url")
-    port = get_config("redis", "port")
-
-    connection = redis.Redis(host=host, port=port, db=0)
-
-    return connection
-
-
-_s3_conn = None
-
-
-def get_s3_connection():
-    global _s3_conn
-
-    if not _s3_conn:
-
-        access = get_config("AWS", "access_key_id")
-        secret = get_config("AWS", "secret_access_key")
-        bucket_name = get_config("AWS", "bucket")
-        endpoint_url = get_config("AWS", "end_point")
-        s3_region = get_config("AWS", "region")
-
-        _s3_conn = S3Utils(access, secret, bucket_name, endpoint_url, s3_region)
-    return _s3_conn
-
-
-def list_s3_files(prefix):
-    s3 = get_s3_connection()
-    path_sizes = s3.list_files_with_sizes(prefix)
-    return path_sizes
-
-
-def list_catalog(collection_path):
-    s3 = get_s3_connection()
     catalog_body = s3.get_object_body(collection_path)
     catalog = json.loads(catalog_body.decode('utf-8'))
     collection = Collection.from_dict(catalog)
@@ -107,30 +62,8 @@ def list_catalog(collection_path):
     return result
 
 
-_nc = NATS()
-
-
-def nats_connect():
-    global _nc
-    options = {
-        "servers": [get_config("NATS", "url")],
-    }
-
-    _nc.connect(**options)
-
-
-def nats_close():
-    global _nc
-
-    _nc.close()
-
-
-def nats_publish(topic, message):
-    _nc.publish(topic, message)
-
-
-def get_ard_list(folder):
-    path_sizes = list_s3_files(folder)
+def get_ard_list(s3: S3Api, folder: str):
+    path_sizes = s3.list_s3_files(folder)
     logging.info(f"got {len(path_sizes)} files, for '{folder}'")
     df_result = pd.DataFrame({'id': [], 'url': []})
     for r in path_sizes:

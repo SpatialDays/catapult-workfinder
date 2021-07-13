@@ -42,14 +42,14 @@ class BaseWorkFinder:
         pass
 
     @abstractmethod
-    def submit_tasks(self, to_do_list):
+    def submit_tasks(self, to_do_list: pd.DataFrame):
         """
         submit_tasks will send the list of work to where it is needed for this tasking.
         """
         pass
 
 
-def _diff_work_lists(possible, done):
+def _diff_work_lists(possible: pd.DataFrame, done: pd.DataFrame):
     df_result = pd.DataFrame({'id': [], 'url': []})
 
     logging.info(f"Checking {len(possible.index)} things against {len(done.index)} already done things.")
@@ -75,5 +75,5 @@ def _to_pandas(input):
     _to_pandas will make sure the input array is a pandas dataframe. if it is not something that can be converted it
     will raise an error.
     """
-
+    # TODO: implement this when needed
     return input

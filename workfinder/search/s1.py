@@ -1,25 +1,30 @@
+import json
 import logging
 import math
-import os
-from pathlib import Path
 
 import numpy
 import pandas as pd
-from libcatapult.storage.s3_tools import S3Utils
+from libcatapult.queues.redis import RedisQueue
 from sentinelsat import SentinelAPI
 
 from workfinder import get_config
-from workfinder.search import get_aoi, get_redis_connection, list_s3_files, get_ard_list
+from workfinder.api.s3 import S3Api
+from workfinder.search import get_aoi, get_ard_list
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
-class S1 (BaseWorkFinder):
+class S1(BaseWorkFinder):
 
-    def submit_tasks(self, to_do_list):
+    def __init__(self, s3: S3Api, redis: RedisQueue):
+        super().__init__()
+        self._s3 = s3
+        self._redis = redis
+
+    def submit_tasks(self, to_do_list: pd.DataFrame):
 
         channel = get_config("s1", "redis_channel")
         # get redis connection
-        conn = get_redis_connection()
+        self._redis.connect()
         # submit each task.
         for e in to_do_list:
             payload = {
@@ -27,16 +32,18 @@ class S1 (BaseWorkFinder):
                 "s3_bucket": "public-eo-data",
                 "s3_dir": "test/sentinel_1/",
                 "ext_dem": f"common_sensing/ancillary_products/SRTM1Sec/SRTM30_Fiji_{e['hemisphere']}.tif"}
-            conn.publish(channel, payload)
-        pass
+            self._redis.publish(channel, json.dumps(payload))
 
     def find_work_list(self):
-        aoi = get_aoi()
+
+        self._s3.get_s3_connection()
+
         region = get_config("app", "region")
         user = get_config("copernicus", "username")
         pwd = get_config("copernicus", "pwd")
         logging.info(f"{user} #### {pwd}")
 
+        aoi = get_aoi(self._s3, region)
         esa_api = SentinelAPI(user, pwd)
         print(esa_api.dhus_version)
         res = esa_api.query(
@@ -62,13 +69,11 @@ class S1 (BaseWorkFinder):
         return get_ard_list(f"common_sensing/{region.lower()}/sentinel_1/")
 
 
-def get_s1_asf_urls(s1_name_list):
+def get_s1_asf_urls(s1_name_list: pd.Series):
     df = pd.DataFrame()
 
     num_parts = math.ceil(len(s1_name_list) / 119)
     s1_name_lists = numpy.array_split(numpy.array(s1_name_list), num_parts)
-    logging.debug([len(l) for l in s1_name_lists])
-
     for entry in s1_name_lists:
         try:
             df = df.append(

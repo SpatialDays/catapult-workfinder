@@ -3,30 +3,36 @@ import os
 from pathlib import Path
 
 import pandas as pd
-
+from libcatapult.queues.nats import NatsQueue
 from workfinder import get_config
-from workfinder.search import list_s3_files, nats_connect, nats_publish, nats_close, list_catalog, get_ard_list
+from workfinder.api.s3 import S3Api
+from workfinder.search import list_catalog, get_ard_list
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
 class S1ARD (BaseWorkFinder):
 
-    def submit_tasks(self, to_do_list):
+    def __init__(self, s3: S3Api, nats: NatsQueue):
+        super().__init__()
+        self.s3 = s3
+        self.nats = nats
+
+    def submit_tasks(self, to_do_list: pd.DataFrame):
         # get nats connection
         channel = get_config("s1_ard", "nats_channel")
-        nats_connect()
+        self.nats.connect()
         for index, r in to_do_list.iterrows():
             logging.info(f"publishing {r['url']}")
-            nats_publish(channel, r['url'])
-        nats_close()
+            self.nats.publish(channel, r['url'])
+        self.nats.close()
 
     def find_work_list(self):
         region = get_config("app", "region")
-        return get_ard_list(f"common_sensing/{region.lower()}/sentinel_1/")
+        return get_ard_list(self.s3, f"common_sensing/{region.lower()}/sentinel_1/")
 
     def find_already_done_list(self):
         stac_key = get_config("s1_ard", "stac_collection_path")
-        path_sizes = list_catalog(stac_key)
+        path_sizes = list_catalog(self.s3, stac_key)
         # map filenames to ids
         df_result = pd.DataFrame({'id': []})
         for r in path_sizes:
