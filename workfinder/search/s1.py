@@ -4,7 +4,7 @@ import math
 
 import numpy
 import pandas as pd
-from libcatapult.queues.redis import RedisQueue
+from libcatapult.queues.base_queue import BaseQueue
 from sentinelsat import SentinelAPI
 
 from workfinder import get_config
@@ -15,45 +15,42 @@ from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 class S1(BaseWorkFinder):
 
-    def __init__(self, s3: S3Api, redis: RedisQueue):
+    def __init__(self, s3: S3Api, redis: BaseQueue, esa_api:SentinelAPI):
         super().__init__()
         self._s3 = s3
         self._redis = redis
+        self._esa_api = esa_api
 
     def submit_tasks(self, to_do_list: pd.DataFrame):
 
-        channel = get_config("s1", "redis_channel")
-        # get redis connection
-        self._redis.connect()
-        # submit each task.
-        for e in to_do_list:
-            payload = {
-                "in_scene": e['id'],
-                "s3_bucket": "public-eo-data",
-                "s3_dir": "test/sentinel_1/",
-                "ext_dem": f"common_sensing/ancillary_products/SRTM1Sec/SRTM30_Fiji_{e['hemisphere']}.tif"}
-            self._redis.publish(channel, json.dumps(payload))
+        if to_do_list is not None and len(to_do_list) > 0:
+            channel = get_config("s1", "redis_channel")
+            # get redis connection
+            self._redis.connect()
+            # submit each task.
+            for index, e in to_do_list.iterrows():
+                payload = {
+                    "in_scene": e['id'],
+                    "s3_bucket": "public-eo-data",
+                    "s3_dir": "test/sentinel_1/",
+                    "ext_dem": f"common_sensing/ancillary_products/SRTM1Sec/SRTM30_Fiji_{e['hemisphere']}.tif"}
+                self._redis.publish(channel, json.dumps(payload))
 
     def find_work_list(self):
 
         self._s3.get_s3_connection()
 
         region = get_config("app", "region")
-        user = get_config("copernicus", "username")
-        pwd = get_config("copernicus", "pwd")
-        logging.info(f"{user} #### {pwd}")
-
         aoi = get_aoi(self._s3, region)
-        esa_api = SentinelAPI(user, pwd)
-        print(esa_api.dhus_version)
-        res = esa_api.query(
+        print(self._esa_api.dhus_version)
+        res = self._esa_api.query(
             area=aoi,
             platformname='Sentinel-1',
             producttype='GRD',
             sensoroperationalmode='IW'
         )
 
-        esa_grd = esa_api.to_geodataframe(res)
+        esa_grd = self._esa_api.to_geodataframe(res)
         asf_grd_matches = get_s1_asf_urls(esa_grd.title.values)
 
         df = pd.merge(left=esa_grd, right=asf_grd_matches, how='left', left_on='title', right_on='Granule Name')

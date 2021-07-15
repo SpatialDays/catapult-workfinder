@@ -10,6 +10,7 @@ from os import environ
 
 from libcatapult.queues.nats import NatsQueue
 from libcatapult.queues.redis import RedisQueue
+from sentinelsat import SentinelAPI
 
 from workfinder.api.s3 import S3Api
 
@@ -60,3 +61,9 @@ def get_default_redis_api():
     host = get_config("REDIS", "host")
     port = get_config("REDIS", "port")
     return RedisQueue(host, port)
+
+
+def get_default_esa_api():
+    user = get_config("copernicus", "username")
+    pwd = get_config("copernicus", "pwd")
+    return SentinelAPI(user, pwd)
