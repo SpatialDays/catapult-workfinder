@@ -8,11 +8,17 @@ import configparser
 import logging
 from os import environ
 
+from libcatapult.queues.nats import NatsQueue
+from libcatapult.queues.redis import RedisQueue
+from sentinelsat import SentinelAPI
+
+from workfinder.api.s3 import S3Api
+
 _config = configparser.ConfigParser()
 _config.read("config.cfg")
 
 
-def get_config(section, key):
+def get_config(section: str, key: str):
     """
     Get a configuration value from the environment if it is available if not fall back to the config file.
 
@@ -32,3 +38,32 @@ def get_config(section, key):
 logger = logging.getLogger('')
 logger.setLevel(logging.DEBUG)
 logging.getLogger("fiona").setLevel(logging.INFO)
+logging.getLogger("boto3").setLevel(logging.INFO)
+logging.getLogger("botocore").setLevel(logging.INFO)
+
+
+def get_default_s3_api():
+    access = get_config("AWS", "access_key_id")
+    secret = get_config("AWS", "secret_access_key")
+    bucket_name = get_config("AWS", "bucket")
+    endpoint_url = get_config("AWS", "end_point")
+    s3_region = get_config("AWS", "region")
+
+    return S3Api(access, secret, bucket_name, endpoint_url, s3_region)
+
+
+def get_default_nats_api():
+    nats_url = get_config("NATS", "url")
+    return NatsQueue(nats_url)
+
+
+def get_default_redis_api():
+    host = get_config("REDIS", "host")
+    port = get_config("REDIS", "port")
+    return RedisQueue(host, port)
+
+
+def get_default_esa_api():
+    user = get_config("copernicus", "username")
+    pwd = get_config("copernicus", "pwd")
+    return SentinelAPI(user, pwd)

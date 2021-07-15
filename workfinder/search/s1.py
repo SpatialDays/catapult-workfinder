@@ -1,32 +1,56 @@
+import json
 import logging
 import math
 
 import numpy
 import pandas as pd
-from libcatapult.storage.s3_tools import S3Utils
+from libcatapult.queues.base_queue import BaseQueue
 from sentinelsat import SentinelAPI
 
 from workfinder import get_config
-from workfinder.search import get_aoi
+from workfinder.api.s3 import S3Api
+from workfinder.search import get_aoi, get_ard_list
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
-class S1 (BaseWorkFinder):
+class S1(BaseWorkFinder):
+
+    def __init__(self, s3: S3Api, redis: BaseQueue, esa_api:SentinelAPI):
+        super().__init__()
+        self._s3 = s3
+        self._redis = redis
+        self._esa_api = esa_api
+
+    def submit_tasks(self, to_do_list: pd.DataFrame):
+
+        if to_do_list is not None and len(to_do_list) > 0:
+            channel = get_config("s1", "redis_channel")
+            # get redis connection
+            self._redis.connect()
+            # submit each task.
+            for index, e in to_do_list.iterrows():
+                payload = {
+                    "in_scene": e['id'],
+                    "s3_bucket": "public-eo-data",
+                    "s3_dir": "test/sentinel_1/",
+                    "ext_dem": f"common_sensing/ancillary_products/SRTM1Sec/SRTM30_Fiji_{e['hemisphere']}.tif"}
+                self._redis.publish(channel, json.dumps(payload))
 
     def find_work_list(self):
-        aoi = get_aoi()
+
+        self._s3.get_s3_connection()
+
         region = get_config("app", "region")
-        user = get_config("copernicus", "username")
-        pwd = get_config("copernicus", "pwd")
-        logging.info(f"{user} #### {pwd}")
-        esa_api = SentinelAPI(user, pwd)
-        res = esa_api.query(
+        aoi = get_aoi(self._s3, region)
+        print(self._esa_api.dhus_version)
+        res = self._esa_api.query(
             area=aoi,
             platformname='Sentinel-1',
             producttype='GRD',
             sensoroperationalmode='IW'
         )
-        esa_grd = esa_api.to_geodataframe(res)
+
+        esa_grd = self._esa_api.to_geodataframe(res)
         asf_grd_matches = get_s1_asf_urls(esa_grd.title.values)
 
         df = pd.merge(left=esa_grd, right=asf_grd_matches, how='left', left_on='title', right_on='Granule Name')
@@ -39,25 +63,14 @@ class S1 (BaseWorkFinder):
 
     def find_already_done_list(self):
         region = get_config("app", "region")
-        access = get_config("S3", "access_key_id")
-        secret = get_config("S3", "secret_access_key")
-        bucket_name = get_config("S3", "bucket")
-        endpoint_url = get_config("S3", "end_point")
-        s3_region = get_config("S3", "region")
-
-        s3 = S3Utils(access, secret, bucket_name, endpoint_url, s3_region)
-
-        path_sizes = s3.list_files_with_sizes(f'common_sensing/{region}/sentinel_1/')
-        return path_sizes
+        return get_ard_list(f"common_sensing/{region.lower()}/sentinel_1/")
 
 
-def get_s1_asf_urls(s1_name_list):
+def get_s1_asf_urls(s1_name_list: pd.Series):
     df = pd.DataFrame()
 
     num_parts = math.ceil(len(s1_name_list) / 119)
     s1_name_lists = numpy.array_split(numpy.array(s1_name_list), num_parts)
-    logging.debug([len(l) for l in s1_name_lists])
-
     for entry in s1_name_lists:
         try:
             df = df.append(

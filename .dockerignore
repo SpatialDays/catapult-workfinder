@@ -1,0 +1,7 @@
+venv_make/
+venv_windows/
+
+.tox
+build/
+dist/
+*.egg-info/

@@ -1,3 +1,4 @@
+import logging
 from abc import abstractmethod
 import pandas as pd
 
@@ -14,12 +15,12 @@ class BaseWorkFinder:
         possible = self.find_work_list()
         done = self.find_already_done_list()
 
-        if not possible:
+        if possible is None or possible.empty:
             raise NoWorkException
 
         df_possible = _to_pandas(possible)
         df_done = pd.DataFrame({'id': []})
-        if done:
+        if done is not None and not done.empty:
             df_done = _to_pandas(done)
 
         return _diff_work_lists(df_possible, df_done)
@@ -40,12 +41,32 @@ class BaseWorkFinder:
         """
         pass
 
+    @abstractmethod
+    def submit_tasks(self, to_do_list: pd.DataFrame):
+        """
+        submit_tasks will send the list of work to where it is needed for this tasking.
+        """
+        pass
 
-def _diff_work_lists(possible, done):
+
+def _diff_work_lists(possible: pd.DataFrame, done: pd.DataFrame):
     df_result = pd.DataFrame({'id': [], 'url': []})
+
+    logging.info(f"Checking {len(possible.index)} things against {len(done.index)} already done things.")
+
+    # This is about the worst possible way to do this.
+    # (ok it could be worse)
+    # but there should be a better way to do this
     for index, r in possible.iterrows():
-        if not (done["id"] == r['id'])[0]:
+        found = False
+        for index_j, v in done.iterrows():
+            if v["id"] == r['id']:
+                found = True
+                break
+        if not found:
             df_result = df_result.append({'id': r['id'], 'url': r['url']}, ignore_index=True)
+
+    logging.info(f"found {len(df_result.index)} things to do.")
     return df_result
 
 
@@ -54,5 +75,5 @@ def _to_pandas(input):
     _to_pandas will make sure the input array is a pandas dataframe. if it is not something that can be converted it
     will raise an error.
     """
-
+    # TODO: implement this when needed
     return input
