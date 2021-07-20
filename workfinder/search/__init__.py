@@ -111,27 +111,3 @@ def _extract_id_ard_path(p: str):
     parts = Path(os.path.split(p)[0]).stem
     return parts
 
-
-def espa_api(endpoint, verb='get', body=None, uauth=None):
-    """ Suggested simple way to interact with the ESPA JSON REST API """
-    host = get_config("usgs", "host")
-
-    auth_tup = uauth
-    if not uauth:
-        username = get_config("usgs", "username")
-        password = get_config("usgs", "password")
-        auth_tup = (username, password)
-    response = getattr(requests, verb)(host + endpoint, auth=auth_tup, json=body)
-    logging.debug('{} {}'.format(response.status_code, response.reason))
-    data = response.json()
-    if isinstance(data, dict):
-        messages = data.pop("messages", None)
-        if messages:
-            logging.debug(json.dumps(messages, indent=4))
-    try:
-        response.raise_for_status()
-    except Exception as e:
-        logging.warning(e)
-        return None
-    else:
-        return data

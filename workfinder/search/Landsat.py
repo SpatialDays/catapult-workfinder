@@ -6,16 +6,18 @@ import geopandas as gpd
 from libcatapult.queues.base_queue import BaseQueue
 
 from workfinder import get_config, S3Api
+from workfinder.api.espa_api import EspaAPI
 from workfinder.search import get_ard_list, get_aoi, download_ancillary_file, download_ancillary_http
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
-class Landsat8 (BaseWorkFinder):
+class Landsat8(BaseWorkFinder):
 
-    def __init__(self, s3: S3Api, redis: BaseQueue):
+    def __init__(self, s3: S3Api, redis: BaseQueue, espa: EspaAPI):
         super().__init__()
         self._s3 = s3
         self._redis = redis
+        self._espa = espa
 
     def find_work_list(self):
         self._s3.get_s3_connection()
@@ -33,19 +35,16 @@ class Landsat8 (BaseWorkFinder):
         region = get_config("app", "region")
         return get_ard_list(self._s3, f"common_sensing/{region.lower()}/landsat_8/")
 
-    def submit_tasks(self, to_do_list):
+    def submit_tasks(self, to_do_list: pd.DataFrame):
         if to_do_list is not None and len(to_do_list) > 0:
-            channel = get_config("landsat8", "redis_channel")
+
+            order_id = self._order_products(to_do_list)
+
+            channel = get_config("landsat8", "wait_redis_channel")
             # get redis connection
             self._redis.connect()
             # submit each task.
-            for index, e in to_do_list.iterrows():
-                payload = {
-                    "in_scene": e['id'],
-                    "s3_bucket": "public-eo-data",
-                    "s3_dir": "test/landsat_8/",
-                }
-                self._redis.publish(channel, json.dumps(payload))
+            self._redis.publish(channel, json.dumps({"order_id": order_id}))
             self._redis.close()
 
     def _get_rows_paths(self):
@@ -61,9 +60,17 @@ class Landsat8 (BaseWorkFinder):
         region_ls_grans = world_granules[world_granules[region] == True]
         return region_ls_grans
 
+    def _order_products(self, to_do_list: pd.DataFrame):
+        order = espa_api('available-products', body=dict(inputs=to_do_list['url'].tolist()))
+        order['format'] = 'gtiff'
+        order['resampling_method'] = 'cc'
+        order['note'] = f"CS_{get_config('app', 'region')}_regular"
 
-def _order_products(to_do_list):
-    pass
+        logging.info(json.dumps(order))
+
+        resp = self._espa.call('order', verb='post', body=order)
+        logging.info(f"created order id {resp['orderid']}")
+        return resp['orderid']
 
 
 def _download_metadata():
@@ -76,4 +83,5 @@ def _download_metadata():
 
 
 def _apply_row_mapping(row):
+    # logging.info(row)
     return {'id': row['Landsat Product Identifier L1'][:25], 'url': row['Landsat Product Identifier L1']}
