@@ -4,12 +4,13 @@ import math
 
 import numpy
 import pandas as pd
+import geopandas as gpd
 from libcatapult.queues.base_queue import BaseQueue
 from sentinelsat import SentinelAPI
 
 from workfinder import get_config
 from workfinder.api.s3 import S3Api
-from workfinder.search import get_aoi, get_ard_list
+from workfinder.search import get_aoi_wkt, get_ard_list
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
@@ -37,11 +38,10 @@ class S1(BaseWorkFinder):
                 self._redis.publish(channel, json.dumps(payload))
 
     def find_work_list(self):
-
         self._s3.get_s3_connection()
 
         region = get_config("app", "region")
-        aoi = get_aoi(self._s3, region)
+        aoi = get_aoi_wkt(self._s3, region)
         print(self._esa_api.dhus_version)
         res = self._esa_api.query(
             area=aoi,

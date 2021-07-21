@@ -12,6 +12,7 @@ from libcatapult.queues.nats import NatsQueue
 from libcatapult.queues.redis import RedisQueue
 from sentinelsat import SentinelAPI
 
+from workfinder.api.espa_api import EspaAPI
 from workfinder.api.s3 import S3Api
 
 _config = configparser.ConfigParser()
@@ -35,14 +36,24 @@ def get_config(section: str, key: str):
     return _config.get(section, key)
 
 
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+console.setFormatter(
+    logging.Formatter('%(asctime)s %(levelname)s %(name)s %(filename)s:%(lineno)s -- %(message)s')
+)
+
 logger = logging.getLogger('')
 logger.setLevel(logging.DEBUG)
 logging.getLogger("fiona").setLevel(logging.INFO)
 logging.getLogger("boto3").setLevel(logging.INFO)
 logging.getLogger("botocore").setLevel(logging.INFO)
+logging.getLogger("urllib3").setLevel(logging.INFO)
+logging.getLogger("s3transfer").setLevel(logging.INFO)
+
+logger.addHandler(console)
 
 
-def get_default_s3_api():
+def default_s3_api():
     access = get_config("AWS", "access_key_id")
     secret = get_config("AWS", "secret_access_key")
     bucket_name = get_config("AWS", "bucket")
@@ -52,18 +63,25 @@ def get_default_s3_api():
     return S3Api(access, secret, bucket_name, endpoint_url, s3_region)
 
 
-def get_default_nats_api():
+def default_nats_api():
     nats_url = get_config("NATS", "url")
     return NatsQueue(nats_url)
 
 
-def get_default_redis_api():
+def default_redis_api():
     host = get_config("REDIS", "host")
     port = get_config("REDIS", "port")
     return RedisQueue(host, port)
 
 
-def get_default_esa_api():
+def default_esa_api():
     user = get_config("copernicus", "username")
     pwd = get_config("copernicus", "pwd")
     return SentinelAPI(user, pwd)
+
+
+def default_espa_api():
+    host = get_config("usgs", "host")
+    username = get_config("usgs", "username")
+    password = get_config("usgs", "password")
+    return EspaAPI(host, username, password)

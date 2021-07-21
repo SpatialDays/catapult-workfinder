@@ -1,6 +1,11 @@
 import json
 import logging
 import os
+import shutil
+
+import requests
+
+from urllib import request
 from pathlib import Path
 
 import geopandas as gpd
@@ -16,6 +21,11 @@ def get_crs():
     return {"init": crs}
 
 
+def get_aoi_wkt(s3: S3Api, region: str):
+    value = get_aoi(s3, region)
+    return value.wkt
+
+
 def get_aoi(s3: S3Api, region: str):
     borders = get_world_borders(s3)
     aoi = borders.loc[borders.NAME == region]
@@ -23,34 +33,54 @@ def get_aoi(s3: S3Api, region: str):
         raise ValueError(f"region \"{region}\" not found in world borders file")
     envelope = aoi.to_crs(get_crs()).envelope
     value = envelope.to_crs({"init": "epsg:4326"}).values[0]
-    return value.wkt
+    return value
 
 
 def get_world_borders(s3: S3Api):
-    download_world_borders(s3)
+    download_ancillary_file(s3, "TM_WORLD_BORDERS.geojson", "TM_WORLD_BORDERS/TM_WORLD_BORDERS.geojson")
 
-    inter_dir = get_config("app", "temp_dir")
-    anc_dir = os.path.join(inter_dir, "ancillary")
+    anc_dir = get_ancillary_dir()
     borders_local = os.path.join(anc_dir, "TM_WORLD_BORDERS.geojson")
 
     return gpd.read_file(borders_local)
 
 
-def download_world_borders(s3: S3Api):
+def get_ancillary_dir():
     inter_dir = get_config("app", "temp_dir")
     anc_dir = os.path.join(inter_dir, "ancillary")
-    os.makedirs(anc_dir, exist_ok=True)
     os.makedirs(os.path.join(inter_dir, "outputs"), exist_ok=True)
-    anc_dir_rem = 'common_sensing/ancillary_products/'
-    borders_local = os.path.join(anc_dir, "TM_WORLD_BORDERS.geojson")
-    borders_remote = os.path.join(anc_dir_rem, "TM_WORLD_BORDERS/TM_WORLD_BORDERS.geojson")
+    os.makedirs(anc_dir, exist_ok=True)
+    return anc_dir
 
-    if not os.path.exists(borders_local):
-        logging.info(f'Downloading {borders_remote}')
-        s3.fetch_file(borders_remote, borders_local)
-        logging.info(f'Downloaded {borders_remote}')
+
+def download_ancillary_file(s3: S3Api, name, remote_path):
+    anc_dir = get_ancillary_dir()
+    anc_dir_rem = 'common_sensing/ancillary_products/'
+    local = os.path.join(anc_dir, name)
+    remote = os.path.join(anc_dir_rem, remote_path)
+
+    if not os.path.exists(local):
+        logging.info(f'Downloading {remote}')
+        s3.fetch_file(remote, local)
+        logging.info(f'Downloaded {remote}')
     else:
-        logging.info(f'{borders_local} already available')
+        logging.info(f'{name} already available')
+
+    return local
+
+
+def download_ancillary_http(name, url):
+    anc_dir = get_ancillary_dir()
+    local = os.path.join(anc_dir, name)
+    if not os.path.exists(local):
+        logging.info(f'Downloading {url}')
+        with request.urlopen(url) as response, open(local, 'wb') as out_file:
+            shutil.copyfileobj(response, out_file)
+        logging.info(f'Downloaded {url}')
+    else:
+        logging.info(f"{name} already available")
+
+    return local
 
 
 def list_catalog(s3: S3Api, collection_path: str):
@@ -80,3 +110,4 @@ def get_ard_list(s3: S3Api, folder: str):
 def _extract_id_ard_path(p: str):
     parts = Path(os.path.split(p)[0]).stem
     return parts
+
