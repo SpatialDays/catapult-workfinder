@@ -27,7 +27,7 @@ class Landsat8(BaseWaiter):
         region = get_config("app", "region")
         
         landsat_registry = {
-                'LE04': 'landsat_7',
+                'LE04': 'landsat_4',
                 'LE05': 'landsat_5',
                 'LE07': 'landsat_7',
                 'LE08': 'landsat_8',
