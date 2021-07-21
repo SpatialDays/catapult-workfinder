@@ -36,17 +36,17 @@ class Landsat8(BaseWaiter):
         for item in resp[order_id]:
             url = item.get('product_dload_url')
             
-             for k, v in landsat_registry.items():
-                 if k in url:
-                     nm = v
-                     break
-             if not nm:
-                 raise Exception("unknown landsat url")
-             # build payload object
-             # TODO: this s3_dir should to be configurable
-             payload = {"in_scene": url, "s3_bucket": target_bucket, "s3_dir": f"common_sensing/{region}/{nm}/"}
-             # send to redis
-             self.q.publish(target_queue, json.dumps(payload))
+            for k, v in landsat_registry.items():
+                if k in url:
+                    nm = v
+                    break
+            if not nm:
+                raise Exception("unknown landsat url")
+            # build payload object
+            # TODO: this s3_dir should to be configurable
+            payload = {"in_scene": url, "s3_bucket": target_bucket, "s3_dir": f"common_sensing/{region.lower()}/{nm}/"}
+            # send to redis
+            self.q.publish(target_queue, json.dumps(payload))
 
     def get_redis_source_queue(self):
         return get_config("landsat8", "redis_pending_channel")
