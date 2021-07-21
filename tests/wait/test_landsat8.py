@@ -27,7 +27,7 @@ def test_complete():
     espa = mock_espa_api()
 
     # TODO: fill this in with real stuff
-    espa.call.return_value = [{}, {}, {}]
+    espa.call.return_value = {"test_order_id": [{}, {}, {}]}
 
     landsat = Landsat8(redis, espa)
 
