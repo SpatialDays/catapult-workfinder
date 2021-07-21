@@ -15,7 +15,7 @@ def test_incomplete():
     redis = mock_redis()
     espa = mock_espa_api()
 
-    espa.call.return_value = []
+    espa.call.return_value = {"test_order_id": []}
 
     landsat = Landsat8(redis, espa)
 
