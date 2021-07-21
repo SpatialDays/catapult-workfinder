@@ -26,15 +26,16 @@ class Landsat8(BaseWaiter):
         target_bucket = get_config("AWS", "bucket")
         for item in resp[order_id]:
             url = item.get('product_dload_url')
-            if 'LE07' in url:
-                nm = 'landsat_7'
-            elif 'LT05' in url:
-                nm = 'landsat_5'
-            elif 'LT04' in url:
-                nm = 'landsat_5'
-            elif 'LC08' in url:
-                nm = 'landsat_8'
-            else:
+           landsat_registry = {
+                'LE04': 'landsat_7',
+                'LE05': 'landsat_5',
+                'LE07': 'landsat_7',
+                'LE08': 'landsat_8',
+            }
+            for k, v in landsat_registry.items():
+                if k in url:
+                    nm = v
+            if not nm:
                 raise Exception("unknown landsat url")
             # build payload object
             # TODO: this s3_dir should to be configurable
