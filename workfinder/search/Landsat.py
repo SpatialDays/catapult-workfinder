@@ -40,7 +40,7 @@ class Landsat8(BaseWorkFinder):
 
             order_id = self._order_products(to_do_list)
 
-            channel = get_config("landsat8", "wait_redis_channel")
+            channel = get_config("landsat8", "redis_pending_channel")
             # get redis connection
             self._redis.connect()
             # submit each task.
@@ -57,11 +57,13 @@ class Landsat8(BaseWorkFinder):
         world_granules[region] = world_granules.geometry.apply(lambda x: gpd.GeoSeries(x).intersects(aoi))
         # Filter based on any True intersections
         world_granules[region] = world_granules[world_granules[region]].any(1)
+        # NOTE: this line will show a warning in pycharm that the == should be is however for the pandas magic to work
+        # it must be ==
         region_ls_grans = world_granules[world_granules[region] == True]
         return region_ls_grans
 
     def _order_products(self, to_do_list: pd.DataFrame):
-        order = espa_api('available-products', body=dict(inputs=to_do_list['url'].tolist()))
+        order = self._espa.call('available-products', body=dict(inputs=to_do_list['url'].tolist()))
         order['format'] = 'gtiff'
         order['resampling_method'] = 'cc'
         order['note'] = f"CS_{get_config('app', 'region')}_regular"

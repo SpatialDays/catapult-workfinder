@@ -1,4 +1,5 @@
 import json
+import logging
 
 from libcatapult.queues.base_queue import BaseQueue
 
@@ -15,11 +16,12 @@ class Landsat8(BaseWaiter):
 
     def check_order(self, order_id: str):
         resp = self.espa.call(f'item-status/{order_id}', body={'status': 'complete'})
-        return len(resp) > 0
+        logging.info(f"item-status returned: {resp}")
+        return len(resp[order_id]) > 0
 
     def send_complete_order(self, order_details: dict):
-        order_id = order_details['orderid']
-        resp = self.espa.call(f"item-status/{order_details['orderid']}", body={'status': 'complete'})
+        order_id = order_details['order_id']
+        resp = self.espa.call(f"item-status/{order_details['order_id']}", body={'status': 'complete'})
         target_queue = get_config("landsat8", "redis_channel")
         target_bucket = get_config("AWS", "bucket")
         for item in resp[order_id]:

@@ -48,4 +48,4 @@ class BaseWaiter(object):
                 self.send_complete_order(payload)
             else:
                 logging.info(f"{payload['order_id']} still pending")
-                q.publish(queue_name, item)
+                self.q.publish(queue_name, item)

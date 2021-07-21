@@ -17,6 +17,7 @@ def main(process):
     if param in processors:
         logging.info(f"starting completed order search for {param}")
         processors[param].process()
+        logging.info(f"DONE completed order search for {param}")
     else:
         print(f"unknown processor type {param}")
 
