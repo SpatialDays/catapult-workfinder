@@ -4,6 +4,7 @@ import math
 
 import numpy
 import pandas as pd
+import geopandas as gpd
 from libcatapult.queues.base_queue import BaseQueue
 from sentinelsat import SentinelAPI
 
