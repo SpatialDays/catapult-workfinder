@@ -6,6 +6,7 @@ metadata:
     name: workfinder-landsat8
 spec:
     schedule: "*/5 * * * *"
+    concurrencyPolicy: Forbid
     jobTemplate:
         spec:
             template:
@@ -60,6 +61,7 @@ metadata:
     name: workfinder-landsat8-wait
 spec:
     schedule: "*/5 * * * *"
+    concurrencyPolicy: Forbid
     jobTemplate:
         spec:
             template:
