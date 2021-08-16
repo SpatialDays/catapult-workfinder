@@ -27,13 +27,13 @@ spec:
                 - name: AWS_ACCESS_KEY_ID
                   valueFrom:
                       secretKeyRef:
-                          name: s3_secrets
-                          key: access_key
+                          name: s3-secrets
+                          key: access-key
                 - name: AWS_SECRET_ACCESS_KEY
                   valueFrom:
                       secretKeyRef:
-                          name: s3_secrets
-                          key: secret_key
+                          name: s3-secrets
+                          key: secret-key
                 - name: NATS_URL
                   value: "nats://something.something.com"
                 - name: REDIS_HOST
