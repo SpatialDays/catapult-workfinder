@@ -21,7 +21,7 @@ spec:
             - landsat8
             env:
                 - name: APP_REGION
-                  value: "fiji"
+                  value: "Fiji"
                 - name: AWS_BUCKET
                   value: "public-eo-data"
                 - name: AWS_ACCESS_KEY_ID
@@ -65,13 +65,19 @@ spec:
             - landsat8
             env:
                 - name: APP_REGION
-                  value: "fiji"
+                  value: "Fiji"
                 - name: AWS_BUCKET
                   value: "public-eo-data"
                 - name: AWS_ACCESS_KEY_ID
-                  value: "jdhfgjkldfshgjkfdhs"
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: access-key
                 - name: AWS_SECRET_ACCESS_KEY
-                  value: "jdhfgjkldfshgjkfdhs"
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: secret-key
                 - name: NATS_URL
                   value: "nats://something.something.com"
                 - name: REDIS_HOST
