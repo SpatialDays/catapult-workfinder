@@ -40,11 +40,11 @@ spec:
                                         secretKeyRef:
                                             name: usgs-secrets
                                             key: username
-                                -   name: USGS_USERNAME
+                                -   name: USGS_PASSWORD
                                     valueFrom:
                                         secretKeyRef:
                                             name: usgs-secrets
-                                            key: username
+                                            key: password
                                 -   name: NATS_URL
                                     value: "nats://something.something.com"
                                 -   name: REDIS_HOST
@@ -95,11 +95,11 @@ spec:
                                         secretKeyRef:
                                             name: usgs-secrets
                                             key: username
-                                -   name: USGS_USERNAME
+                                -   name: USGS_PASSWORD
                                     valueFrom:
                                         secretKeyRef:
                                             name: usgs-secrets
-                                            key: username
+                                            key: password
                                 -   name: NATS_URL
                                     value: "nats://something.something.com"
                                 -   name: REDIS_HOST
