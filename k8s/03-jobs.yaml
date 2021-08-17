@@ -19,6 +19,8 @@ spec:
                                 - python
                                 - -m
                                 - workfinder.workfinder
+                                - --limit
+                                - 10
                                 - landsat8
                             env:
                                 -   name: APP_REGION
