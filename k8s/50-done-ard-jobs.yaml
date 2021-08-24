@@ -13,7 +13,7 @@ spec:
                 spec:
                     containers:
                         -   name: workfinder-landsat8
-                            image: satapps/workfinder:0.1.0
+                            image: satapps/workfinder:0.2.0
                             imagePullPolicy: IfNotPresent
                             command:
                                 - python
