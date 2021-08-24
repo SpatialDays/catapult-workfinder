@@ -21,7 +21,7 @@ spec:
                                 - workfinder.workfinder
                                 - --limit
                                 - "10"
-                                - landsat8-ard
+                                - landsat8_ard
                             env:
                                 -   name: APP_REGION
                                     value: "Fiji"

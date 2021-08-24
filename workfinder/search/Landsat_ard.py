@@ -8,7 +8,7 @@ from workfinder.search import list_catalog, get_ard_list
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
-class S1ARD (BaseWorkFinder):
+class LandsatARD (BaseWorkFinder):
 
     def __init__(self, s3: S3Api, nats: NatsQueue):
         super().__init__()
