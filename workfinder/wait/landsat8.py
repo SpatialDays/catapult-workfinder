@@ -25,17 +25,18 @@ class Landsat8(BaseWaiter):
         target_queue = get_config("landsat8", "redis_channel")
         target_bucket = get_config("AWS", "bucket")
         region = get_config("app", "region")
-        
+
         landsat_registry = {
                 'LE04': 'landsat_4',
                 'LE05': 'landsat_5',
                 'LE07': 'landsat_7',
                 'LE08': 'landsat_8',
              }
-        
+
         for item in resp[order_id]:
             url = item.get('product_dload_url')
-            
+            logging.info(f"got url {url}")
+            nm = None
             for k, v in landsat_registry.items():
                 if k in url:
                     nm = v
