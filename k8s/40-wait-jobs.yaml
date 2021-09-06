@@ -48,7 +48,7 @@ spec:
                                 -   name: NATS_URL
                                     value: "nats://something.something.com"
                                 -   name: REDIS_HOST
-                                    value: "redis-master"
+                                    value: "redis-master.ard.svc.cluster.local"
                                 -   name: REDIS_PORT
                                     value: "6379"
                     restartPolicy: Never
