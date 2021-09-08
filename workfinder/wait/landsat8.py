@@ -31,6 +31,11 @@ class Landsat8(BaseWaiter):
                 'LE05': 'landsat_5',
                 'LE07': 'landsat_7',
                 'LE08': 'landsat_8',
+
+                'LC04': 'landsat_4',
+                'LC05': 'landsat_5',
+                'LC07': 'landsat_7',
+                'LC08': 'landsat_8',
              }
 
         for item in resp[order_id]:

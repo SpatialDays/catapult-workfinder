@@ -44,8 +44,12 @@ class BaseWaiter(object):
             payload = json.loads(item)
             logging.info(f"checking on {item}")
             if self.check_order(payload['order_id']):
-                logging.info(f"{payload['order_id']} completed!")
-                self.send_complete_order(payload)
+                try:
+                    logging.info(f"{payload['order_id']} completed!")
+                    self.send_complete_order(payload)
+                except Exception as e:
+                    logging.info(f"{payload['order_id']} failed to send, will retry, {e}")
+                    self.q.publish(queue_name, item)
             else:
                 logging.info(f"{payload['order_id']} still pending")
                 self.q.publish(queue_name, item)
