@@ -33,7 +33,7 @@ def main(process, limit):
         logging.info(f"starting work search for {param}")
         work = processors[param].find_new_work()
         if limit > 0:
-            processors[param].submit_tasks(work.head(limit))
+            processors[param].submit_tasks(work.sample(n=limit))
         else:
             processors[param].submit_tasks(work)
         logging.info(f"done work search for {param}")
