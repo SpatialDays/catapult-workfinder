@@ -69,7 +69,7 @@ class Landsat8(BaseWorkFinder):
         order['resampling_method'] = 'cc'
         order['note'] = f"CS_{get_config('app', 'region')}_regular"
 
-        for k, v in order:
+        for k, v in order.items():
             if k.endswith("_collection"):
                 if k.startswith("oli8_"):
                     v["products"] = ["source_metadata", "l1", "toa", "orca", "stats", "pixel_qa"]
