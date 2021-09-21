@@ -20,7 +20,7 @@ spec:
                                 - -m
                                 - workfinder.workfinder
                                 - --limit
-                                - "10"
+                                - "1"
                                 - landsat8
                             env:
                                 -   name: APP_REGION
