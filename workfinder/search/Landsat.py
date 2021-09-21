@@ -1,8 +1,8 @@
 import json
 import logging
 
-import pandas as pd
 import geopandas as gpd
+import pandas as pd
 from libcatapult.queues.base_queue import BaseQueue
 
 from workfinder import get_config, S3Api
@@ -28,6 +28,7 @@ class Landsat8(BaseWorkFinder):
         df = df[df['WRS Path'].isin(rows_df['ROW'].values) & df['WRS Path'].isin(rows_df['PATH'].values)]
         logging.info("converting to required objects")
         logging.info(df.columns)
+        logging.info(df.head(1))
         df_result = df.apply(_apply_row_mapping, axis=1, result_type='expand')
         return df_result
 
@@ -67,6 +68,13 @@ class Landsat8(BaseWorkFinder):
         order['format'] = 'gtiff'
         order['resampling_method'] = 'cc'
         order['note'] = f"CS_{get_config('app', 'region')}_regular"
+
+        for k, v in order:
+            if k.endswith("_collection"):
+                if k.startswith("oli8_"):
+                    v["products"] = ["source_metadata", "l1", "toa", "orca", "stats", "pixel_qa"]
+                else:
+                    v["products"] = ["source_metadata", "l1", "toa", "bt", "stats", "pixel_qa"]
 
         logging.info(json.dumps(order))
 
