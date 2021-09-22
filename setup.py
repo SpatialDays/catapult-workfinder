@@ -42,5 +42,5 @@ setup(
     tests_require=test_requirements,
     include_package_data=True,
     url='https://github.com/emilyselwood/workfinder',
-    version='0.2.8'
+    version='0.2.9'
 )
