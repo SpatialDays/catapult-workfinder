@@ -72,10 +72,10 @@ class Landsat8(BaseWorkFinder):
         for k, v in order.items():
             if "_collection" in k:
                 if "source_metadata" not in order[k]["products"]:
-                    order[k]["products"] += "source_metadata"
+                    order[k]["products"] += ["source_metadata"]
 
                 if "pixel_qa" not in order[k]["products"]:
-                    order[k]["products"] += "pixel_qa"
+                    order[k]["products"] += ["pixel_qa"]
 
         logging.info(json.dumps(order))
 
