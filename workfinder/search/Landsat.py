@@ -38,7 +38,6 @@ class Landsat8(BaseWorkFinder):
 
     def submit_tasks(self, to_do_list: pd.DataFrame):
         if to_do_list is not None and len(to_do_list) > 0:
-
             order_id = self._order_products(to_do_list)
 
             channel = get_config("landsat8", "redis_pending_channel")
@@ -65,9 +64,23 @@ class Landsat8(BaseWorkFinder):
 
     def _order_products(self, to_do_list: pd.DataFrame):
         order = self._espa.call('available-products', body=dict(inputs=to_do_list['url'].tolist()))
+
+        projection = {
+            'aea': {
+                'standard_parallel_1': 29.5,
+                'standard_parallel_2': 45.5,
+                'central_meridian': -96.0,
+                'latitude_of_origin': 23.0,
+                'false_easting': 0,
+                'false_northing': 0,
+                'datum': 'nad83'
+            }
+        }
+
         order['format'] = 'gtiff'
         order['resampling_method'] = 'cc'
         order['note'] = f"CS_{get_config('app', 'region')}_regular"
+        order['projection'] = projection
 
         for k, v in order.items():
             if "_collection" in k:
@@ -78,7 +91,9 @@ class Landsat8(BaseWorkFinder):
                     order[k]["products"] += ["pixel_qa"]
 
         logging.info(json.dumps(order))
-
+        # POST https://espa.cr.usgs.gov/api/v1/order
+        # example payload
+        # "olitirs8_collection_2_l1": {"products": ["l1", "source_metadata", "pixel_qa"], "inputs": ["LC08_L1TP_071017_20140907_20200911_02_T1"]}, "format": "gtiff", "resampling_method": "cc", "note": "CS_Fiji_regular"}
         resp = self._espa.call('order', verb='post', body=order)
         logging.info(f"created order id {resp['orderid']}")
         return resp['orderid']
