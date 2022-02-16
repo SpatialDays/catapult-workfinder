@@ -17,11 +17,16 @@ class LandsatARD (BaseWorkFinder):
 
     def submit_tasks(self, to_do_list: pd.DataFrame):
         # get nats connection
-        channel = get_config("landsat_ard", "nats_channel")
+        item_channel = get_config("landsat_ard", "item_nats_channel")
+        collection_channel = get_config("landsat_ard", "collection_nats_channel")
+        stac_key = get_config("landsat_ard", "stac_collection_path")
+
         self.nats.connect()
+        self.nats.publish(collection_channel, stac_key)
+
         for index, r in to_do_list.iterrows():
             logging.info(f"publishing {r['url']}")
-            self.nats.publish(channel, r['url'])
+            self.nats.publish(item_channel, r['url'])
         self.nats.close()
 
     def find_work_list(self):
