@@ -38,12 +38,6 @@ def main(process, limit):
         else:
             processors[param].submit_tasks(work)
 
-        loop = asyncio.get_event_loop()
-        try:
-            loop.run_forever()
-        finally:
-            loop.close()
-
         logging.info(f"done work search for {param}")
     else:
         print(f"unknown processor type {param}")
