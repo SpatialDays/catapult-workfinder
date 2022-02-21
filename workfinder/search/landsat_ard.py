@@ -1,4 +1,5 @@
 import logging
+import pathlib
 
 import pandas as pd
 from libcatapult.queues.nats import NatsQueue
@@ -25,8 +26,9 @@ class LandsatARD (BaseWorkFinder):
         self.nats.publish(collection_channel, stac_key)
 
         for index, r in to_do_list.iterrows():
-            logging.info(f"publishing {r['url']}")
-            self.nats.publish(item_channel, r['url'])
+            path = '/'.join(r['url'].split('/')[0:-1])
+            logging.info(f"publishing {r['url']} as {path}")
+            self.nats.publish(item_channel, path)
         self.nats.close()
 
     def find_work_list(self):
