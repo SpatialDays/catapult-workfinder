@@ -26,7 +26,7 @@ class LandsatARD (BaseWorkFinder):
         self.nats.publish(collection_channel, stac_key)
 
         for index, r in to_do_list.iterrows():
-            path = '/'.join(r['url'].split('/')[0:-1])
+            path = '/'.join(r['url'].split('/')[0:-1]) + '/'
             logging.info(f"publishing {r['url']} as {path}")
             self.nats.publish(item_channel, path)
         self.nats.close()
