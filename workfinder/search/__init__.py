@@ -10,6 +10,7 @@ from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
+from libcatapult.storage.s3_tools import NoObjectError
 from pystac import Collection
 
 from workfinder import get_config
@@ -84,11 +85,14 @@ def download_ancillary_http(name, url):
 
 
 def list_catalog(s3: S3Api, collection_path: str):
-
-    catalog_body = s3.get_object_body(collection_path)
-    catalog = json.loads(catalog_body.decode('utf-8'))
-    collection = Collection.from_dict(catalog)
-    result = [i.id for i in collection.get_items()]
+    try:
+        catalog_body = s3.get_object_body(collection_path)
+        catalog = json.loads(catalog_body.decode('utf-8'))
+        collection = Collection.from_dict(catalog)
+        result = [i.id for i in collection.get_items()]
+    except NoObjectError:
+        # if we can't find the collection then there are no items.
+        result = []
     return result
 
 
