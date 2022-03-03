@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-    name: workfinder-landsat8
+    name: workfinder-complete-landsat8
 spec:
     schedule: "*/5 * * * *"
     concurrencyPolicy: Forbid
@@ -12,8 +12,8 @@ spec:
             template:
                 spec:
                     containers:
-                        -   name: workfinder-landsat8
-                            image: "satapps/workfinder:0.2.19"
+                        -   name: workfinder-complete-landsat8
+                            image: "satapps/workfinder:0.2.20"
                             imagePullPolicy: IfNotPresent
                             command:
                                 - python
@@ -48,7 +48,7 @@ spec:
                                             name: usgs-secrets
                                             key: password
                                 -   name: NATS_URL
-                                    value: "nats://something.something.com"
+                                    value: "nats://nats.nats.svc.cluster.local:4222"
                                 -   name: REDIS_HOST
                                     value: "redis-master.ard.svc.cluster.local"
                                 -   name: REDIS_PORT
