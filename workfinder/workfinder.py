@@ -9,18 +9,20 @@ from workfinder.search.Landsat import Landsat8
 from workfinder import default_s3_api, default_nats_api, default_redis_api, default_esa_api, \
     default_espa_api
 
-from workfinder.search.landsat_ard import LandsatARD
+from workfinder.search.landsat_ard import Landsat8ARD
 from workfinder.search.s1 import S1
 from workfinder.search.s1_ard import S1ARD
 
 # Mapping of processor names to objects.
 # Note: Names must be upper case.
+from workfinder.search.s2_ard import S2ARD
 
 processors = {
     "S1": S1(default_s3_api(), default_redis_api(), default_esa_api()),
     "S1_ARD": S1ARD(default_s3_api(), default_nats_api()),
+    "S2_ARD": S2ARD(default_s3_api(), default_nats_api()),
     "LANDSAT8": Landsat8(default_s3_api(), default_redis_api(), default_espa_api()),
-    "LANDSAT8_ARD": LandsatARD(default_s3_api(), default_nats_api()),
+    "LANDSAT8_ARD": Landsat8ARD(default_s3_api(), default_nats_api()),
 }
 
 

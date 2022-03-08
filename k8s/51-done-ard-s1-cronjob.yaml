@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-    name: workfinder-complete-landsat8
+    name: workfinder-complete-S1
 spec:
     schedule: "*/5 * * * *"
     concurrencyPolicy: Forbid
@@ -12,7 +12,7 @@ spec:
             template:
                 spec:
                     containers:
-                        -   name: workfinder-complete-landsat8
+                        -   name: workfinder-complete-S1
                             image: "satapps/workfinder:0.2.20"
                             imagePullPolicy: IfNotPresent
                             command:
@@ -20,8 +20,8 @@ spec:
                                 - -m
                                 - workfinder.workfinder
                                 - --limit
-                                - "10"
-                                - landsat8_ard
+                                - "100"
+                                - S1_ARD
                             env:
                                 -   name: APP_REGION
                                     value: "Fiji"
@@ -54,4 +54,3 @@ spec:
                                 -   name: REDIS_PORT
                                     value: "6379"
                     restartPolicy: Never
-
