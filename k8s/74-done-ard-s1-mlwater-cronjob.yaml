@@ -1,0 +1,57 @@
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+    name: workfinder-complete-s1-mlwater
+spec:
+    schedule: "*/5 * * * *"
+    concurrencyPolicy: Forbid
+    jobTemplate:
+        spec:
+            template:
+                spec:
+                    containers:
+                        -   name: workfinder-complete-s1-mlwater
+                            image: "satapps/workfinder:0.2.21"
+                            imagePullPolicy: IfNotPresent
+                            command:
+                                - python
+                                - -m
+                                - workfinder.workfinder
+                                - --limit
+                                - "100"
+                                - S1_MLWATER
+                            env:
+                                -   name: APP_REGION
+                                    value: "Fiji"
+                                -   name: AWS_BUCKET
+                                    value: "public-eo-data"
+                                -   name: AWS_ACCESS_KEY_ID
+                                    valueFrom:
+                                        secretKeyRef:
+                                            name: s3-secrets
+                                            key: access-key
+                                -   name: AWS_SECRET_ACCESS_KEY
+                                    valueFrom:
+                                        secretKeyRef:
+                                            name: s3-secrets
+                                            key: secret-key
+                                -   name: USGS_USERNAME
+                                    valueFrom:
+                                        secretKeyRef:
+                                            name: usgs-secrets
+                                            key: username
+                                -   name: USGS_PASSWORD
+                                    valueFrom:
+                                        secretKeyRef:
+                                            name: usgs-secrets
+                                            key: password
+                                -   name: NATS_URL
+                                    value: "nats://nats.nats.svc.cluster.local:4222"
+                                -   name: REDIS_HOST
+                                    value: "redis-master.ard.svc.cluster.local"
+                                -   name: REDIS_PORT
+                                    value: "6379"
+                    restartPolicy: Never
+
