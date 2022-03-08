@@ -13,7 +13,7 @@ spec:
                 spec:
                     containers:
                         -   name: workfinder-complete-S1
-                            image: "satapps/workfinder:0.2.20"
+                            image: "satapps/workfinder:0.2.21"
                             imagePullPolicy: IfNotPresent
                             command:
                                 - python
