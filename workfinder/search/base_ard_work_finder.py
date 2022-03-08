@@ -30,8 +30,8 @@ class BaseArdWorkFinder(BaseWorkFinder):
 
     def submit_tasks(self, to_do_list: pd.DataFrame):
         # get nats connection
-        item_channel = get_config("nats", "item_nats_channel")
-        collection_channel = get_config("nats", "collection_nats_channel")
+        item_channel = get_config("NATS", "item_nats_channel")
+        collection_channel = get_config("NATS", "collection_nats_channel")
         stac_key = self.get_stac_key()
 
         self.nats.connect()
