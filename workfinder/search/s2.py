@@ -1,6 +1,8 @@
 import pandas as pd
+from libcatapult.queues.base_queue import BaseQueue
+from sentinelsat import SentinelAPI
 
-from workfinder import get_config
+from workfinder import get_config, S3Api
 from workfinder.search import get_aoi_wkt
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
@@ -27,12 +29,11 @@ class S2(BaseWorkFinder):
         esa_l2a = self._esa_api.to_geodataframe(res)
 
         res = self._esa_api.query(
-            area=aoi, 
+            area=aoi,
             platformname='Sentinel-2',
             producttype='S2MSI1C'
         )
         esa_l1c = self._esa_api.to_geodataframe(res)
-
 
         esa_l1c['scenename'] = esa_l1c.title.apply(
             lambda x: f"{x.split('_')[0]}_{x.split('_')[1]}_{x.split('_')[2]}_{x.split('_')[5]}")
