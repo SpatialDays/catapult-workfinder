@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-    name: workfinder-complete-S1
+    name: workfinder-complete-s1
 spec:
     schedule: "*/5 * * * *"
     concurrencyPolicy: Forbid
@@ -12,7 +12,7 @@ spec:
             template:
                 spec:
                     containers:
-                        -   name: workfinder-complete-S1
+                        -   name: workfinder-complete-s1
                             image: "satapps/workfinder:0.2.23"
                             imagePullPolicy: IfNotPresent
                             command:
