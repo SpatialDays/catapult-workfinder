@@ -12,6 +12,7 @@ from workfinder import default_s3_api, default_nats_api, default_redis_api, defa
 from workfinder.search.landsat_ard import Landsat8ARD, Landsat4ARD, Landsat5ARD, Landsat7ARD
 from workfinder.search.mlwater_ard import Landsat8MlWaterArd, Landsat7MlWaterArd, \
     Landsat5MlWaterArd, Sentinel1MlWaterArd, Sentinel2MlWaterArd
+from workfinder.search.wofs_ard import Landsat8WofsArd, Landsat7WofsArd, Landsat5WofsArd, Sentinel2WofsArd
 from workfinder.search.s1 import S1
 from workfinder.search.s1_ard import S1ARD
 from workfinder.search.s2_ard import S2ARD
@@ -32,11 +33,10 @@ processors = {
     "LANDSAT5_MLWATER": Landsat5MlWaterArd(default_s3_api(), default_nats_api()),
     "S2_MLWATER": Sentinel2MlWaterArd(default_s3_api(), default_nats_api()),
     "S1_MLWATER": Sentinel1MlWaterArd(default_s3_api(), default_nats_api()),
-    "LANDSAT8_WOFS": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
-    "LANDSAT7_WOFS": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
-    "LANDSAT5_WOFS": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
-    "LANDSAT4_WOFS": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
-    "S2_WOFS": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
+    "LANDSAT8_WOFS": Landsat8WofsArd(default_s3_api(), default_nats_api()),
+    "LANDSAT7_WOFS": Landsat7WofsArd(default_s3_api(), default_nats_api()),
+    "LANDSAT5_WOFS": Landsat5WofsArd(default_s3_api(), default_nats_api()),
+    "S2_WOFS": Sentinel2WofsArd(default_s3_api(), default_nats_api()),
 }
 
 
