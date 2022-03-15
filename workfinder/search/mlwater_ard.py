@@ -37,17 +37,6 @@ class Landsat5MlWaterArd(BaseArdWorkFinder):
         return get_config("landsat_ard", "stac_collection_path_5_mlwater")
 
 
-class Landsat4MlWaterArd(BaseArdWorkFinder):
-    def __init__(self, s3: S3Api, nats: NatsQueue):
-        super().__init__(s3, nats)
-
-    def get_sensor_name(self):
-        return "landsat_4_mlwater"
-
-    def get_stac_key(self):
-        return get_config("landsat_ard", "stac_collection_path_4_mlwater")
-
-
 class Sentinel2MlWaterArd(BaseArdWorkFinder):
     def __init__(self, s3: S3Api, nats: NatsQueue):
         super().__init__(s3, nats)

@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-    name: workfinder-complete-landsat4-mlwater
+    name: workfinder-complete-landsat5-wofs
 spec:
     schedule: "*/5 * * * *"
     concurrencyPolicy: Forbid
@@ -12,7 +12,7 @@ spec:
             template:
                 spec:
                     containers:
-                        -   name: workfinder-complete-landsat4-mlwater
+                        -   name: workfinder-complete-landsat5-wofs
                             image: "satapps/workfinder:0.2.24"
                             imagePullPolicy: IfNotPresent
                             command:
@@ -21,7 +21,7 @@ spec:
                                 - workfinder.workfinder
                                 - --limit
                                 - "100"
-                                - LANDSAT4_MLWATER
+                                - LANDSAT5_WOFS
                             env:
                                 -   name: APP_REGION
                                     value: "Fiji"
