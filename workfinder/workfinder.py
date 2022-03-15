@@ -33,7 +33,11 @@ processors = {
     "LANDSAT4_MLWATER": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
     "S2_MLWATER": Sentinel2MlWaterArd(default_s3_api(), default_nats_api()),
     "S1_MLWATER": Sentinel1MlWaterArd(default_s3_api(), default_nats_api()),
-
+    "LANDSAT8_WOFS": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
+    "LANDSAT7_WOFS": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
+    "LANDSAT5_WOFS": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
+    "LANDSAT4_WOFS": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
+    "S2_WOFS": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
 }
 
 
