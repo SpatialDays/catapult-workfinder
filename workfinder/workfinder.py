@@ -10,7 +10,7 @@ from workfinder import default_s3_api, default_nats_api, default_redis_api, defa
     default_espa_api
 
 from workfinder.search.landsat_ard import Landsat8ARD, Landsat4ARD, Landsat5ARD, Landsat7ARD
-from workfinder.search.mlwater_ard import Landsat4MlWaterArd, Landsat8MlWaterArd, Landsat7MlWaterArd, \
+from workfinder.search.mlwater_ard import Landsat8MlWaterArd, Landsat7MlWaterArd, \
     Landsat5MlWaterArd, Sentinel1MlWaterArd, Sentinel2MlWaterArd
 from workfinder.search.s1 import S1
 from workfinder.search.s1_ard import S1ARD
@@ -30,7 +30,6 @@ processors = {
     "LANDSAT8_MLWATER": Landsat8MlWaterArd(default_s3_api(), default_nats_api()),
     "LANDSAT7_MLWATER": Landsat7MlWaterArd(default_s3_api(), default_nats_api()),
     "LANDSAT5_MLWATER": Landsat5MlWaterArd(default_s3_api(), default_nats_api()),
-    "LANDSAT4_MLWATER": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
     "S2_MLWATER": Sentinel2MlWaterArd(default_s3_api(), default_nats_api()),
     "S1_MLWATER": Sentinel1MlWaterArd(default_s3_api(), default_nats_api()),
     "LANDSAT8_WOFS": Landsat4MlWaterArd(default_s3_api(), default_nats_api()),
