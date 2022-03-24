@@ -38,12 +38,14 @@ def get_aoi(s3: S3Api, region: str):
 
 
 def get_world_borders(s3: S3Api):
-    download_ancillary_file(s3, "TM_WORLD_BORDERS.geojson", "TM_WORLD_BORDERS/TM_WORLD_BORDERS.geojson")
+    return get_gpd_file(s3, "TM_WORLD_BORDERS.geojson", "TM_WORLD_BORDERS/TM_WORLD_BORDERS.geojson")
 
-    anc_dir = get_ancillary_dir()
-    borders_local = os.path.join(anc_dir, "TM_WORLD_BORDERS.geojson")
 
-    return gpd.read_file(borders_local)
+def get_gpd_file(s3: S3Api, name, remote_path):
+    download_ancillary_file(s3, name, remote_path)
+    local_name = os.path.join(get_ancillary_dir(), name)
+
+    return gpd.read_file(local_name)
 
 
 def get_ancillary_dir():

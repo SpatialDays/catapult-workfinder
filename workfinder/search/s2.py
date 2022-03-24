@@ -1,9 +1,11 @@
+import json
+import geopandas as gpd
 import pandas as pd
 from libcatapult.queues.base_queue import BaseQueue
 from sentinelsat import SentinelAPI
 
 from workfinder import get_config, S3Api
-from workfinder.search import get_aoi_wkt
+from workfinder.search import get_aoi_wkt, get_gpd_file, get_ard_list
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
@@ -21,6 +23,17 @@ class S2(BaseWorkFinder):
         region = get_config("app", "region")
         aoi = get_aoi_wkt(self._s3, region)
         print(self._esa_api.dhus_version)
+
+        world_granules = get_gpd_file(self._s3,
+                                      "sentinel2_tiles_world.geojson",
+                                      "SatelliteSceneTiles/sentinel2_tiles_world/sentinel2_tiles_world.geojson")
+        # Create bool for intersection between any tiles - should try inversion to speed up...
+        for n, g in zip(aoi.NAME, aoi.geometry):
+            world_granules[n] = world_granules.geometry.apply(lambda x: gpd.GeoSeries(x).intersects(g))
+        # Filter based on any True intersections
+        world_granules[region] = world_granules[world_granules[aoi.NAME.values]].any(1)
+        region_s2_grans = world_granules[world_granules[region] == True]
+
         res = self._esa_api.query(
             area=aoi,
             platformname='Sentinel-2',
@@ -42,8 +55,33 @@ class S2(BaseWorkFinder):
         esa_l1c['granules'] = esa_l1c.identifier.str[39:44]
         esa_l2a['granules'] = esa_l2a.identifier.str[39:44]
 
+        esa_l1c_srt = esa_l1c.sort_values('beginposition', ascending=False)
+        esa_l2a_srt = esa_l2a.sort_values('beginposition', ascending=False)
+        esa_l1c_srt = esa_l1c_srt.loc[~esa_l1c_srt['scenename'].isin(esa_l2a_srt.scenename.values)]
+
+        esa_l1c_precise = esa_l1c_srt[esa_l1c_srt['granules'].isin(region_s2_grans.Name.values)]
+        esa_l2a_precise = esa_l2a_srt[esa_l2a_srt['granules'].isin(region_s2_grans.Name.values)]
+
+        result = pd.concat([esa_l1c_precise['scenename'], esa_l2a_precise['scenename']], axis=0)
+        df_result = result.apply(_row_mapping, axis=1, result_type='expand')
+        return df_result
+
     def find_already_done_list(self):
-        pass
+        region = get_config("app", "region")
+        return get_ard_list(self._s3, f"common_sensing/{region.lower()}/sentinel_2/")
 
     def submit_tasks(self, to_do_list: pd.DataFrame):
-        pass
+        region = get_config("app", "region")
+        target_bucket = get_config("AWS", "bucket")
+        target_queue = get_config("s2", "redis_channel")
+        for r in to_do_list.tolist():
+            payload = {
+                "in_scene": r['url'],
+                "s3_bucket": target_bucket,
+                "s3_dir": f"common_sensing/{region.lower()}/sentinel_2/"
+            }
+            self._redis.publish(target_queue, json.dumps(payload))
+
+
+def _row_mapping(row):
+    return {'id': row['scenename'], 'url': row['scenename']}
