@@ -13,7 +13,7 @@ spec:
                 spec:
                     containers:
                         -   name: workfinder-complete-landsat7-wofs
-                            image: "satapps/workfinder:0.2.26"
+                            image: "satapps/workfinder:0.2.27"
                             imagePullPolicy: IfNotPresent
                             command:
                                 - python
