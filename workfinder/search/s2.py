@@ -28,8 +28,7 @@ class S2(BaseWorkFinder):
                                       "sentinel2_tiles_world.geojson",
                                       "SatelliteSceneTiles/sentinel2_tiles_world/sentinel2_tiles_world.geojson")
         # Create bool for intersection between any tiles - should try inversion to speed up...
-        for n, g in zip(aoi.NAME, aoi.geometry):
-            world_granules[n] = world_granules.geometry.apply(lambda x: gpd.GeoSeries(x).intersects(g))
+        world_granules[region] = world_granules.geometry.apply(lambda x: gpd.GeoSeries(x).intersects(aoi))
         # Filter based on any True intersections
         world_granules[region] = world_granules[world_granules[aoi.NAME.values]].any(1)
         region_s2_grans = world_granules[world_granules[region] == True]
