@@ -5,7 +5,7 @@ from libcatapult.queues.base_queue import BaseQueue
 from sentinelsat import SentinelAPI
 
 from workfinder import get_config, S3Api
-from workfinder.search import get_aoi_wkt, get_gpd_file, get_ard_list
+from workfinder.search import get_aoi_wkt, get_gpd_file, get_ard_list, get_aoi
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
@@ -21,7 +21,7 @@ class S2(BaseWorkFinder):
         self._s3.get_s3_connection()
 
         region = get_config("app", "region")
-        aoi = get_aoi_wkt(self._s3, region)
+        aoi = get_aoi(self._s3, region)
         print(self._esa_api.dhus_version)
 
         world_granules = get_gpd_file(self._s3,
