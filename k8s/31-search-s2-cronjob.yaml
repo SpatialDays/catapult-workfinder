@@ -53,10 +53,10 @@ spec:
                                             name: esa-secrets
                                             key: username
                                 -   name: COPERNICUS_PASSWORD
-                                        valueFrom:
-                                            secretKeyRef:
-                                                name: esa-secrets
-                                                key: password
+                                    valueFrom:
+                                        secretKeyRef:
+                                            name: esa-secrets
+                                            key: password
                                 -   name: NATS_URL
                                     value: "nats://something.something.com"
                                 -   name: REDIS_HOST
