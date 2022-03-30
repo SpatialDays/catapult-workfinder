@@ -9,7 +9,7 @@ spec:
         spec:
             containers:
                 -   name: workfinder-delete-stac
-                    image: "satapps/workfinder:0.2.29"
+                    image: "satapps/workfinder:0.2.30"
                     imagePullPolicy: IfNotPresent
                     command:
                         - python
