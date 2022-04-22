@@ -1,32 +1,33 @@
+{{- range $.Values.workfinder.jobs }}
 ---
 
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-    name: workfinder-complete-s2-mlwater-ard
+    name: {{ $.Release.Name }}-{{ . }}
 spec:
-    schedule: "*/5 * * * *"
+    schedule: {{ $.Values.workfinder.cronString | quote }}
     concurrencyPolicy: Forbid
     jobTemplate:
         spec:
             template:
                 spec:
                     containers:
-                        -   name: workfinder-complete-s2-mlwater-ard
-                            image: "satapps/workfinder:0.2.32"
-                            imagePullPolicy: IfNotPresent
+                        -   name: {{ $.Release.Name }}-{{ . }}
+                            image: {{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+                            imagePullPolicy: {{ $.Values.image.pullPolicy }}
                             command:
                                 - python
                                 - -m
                                 - workfinder.workfinder
                                 - --limit
-                                - "100"
-                                - S2_MLWATER_ARD
+                                - {{ $.Values.workfinder.batchSize | quote}}
+                                - {{ . | upper | replace "-" "_" }}
                             env:
                                 -   name: APP_REGION
-                                    value: "Fiji"
+                                    value: {{ $.Values.region | title }}
                                 -   name: AWS_BUCKET
-                                    value: "public-eo-data"
+                                    value: {{ $.Values.s3.bucket | quote }}
                                 -   name: AWS_ACCESS_KEY_ID
                                     valueFrom:
                                         secretKeyRef:
@@ -48,10 +49,11 @@ spec:
                                             name: usgs-secrets
                                             key: password
                                 -   name: NATS_URL
-                                    value: "nats://nats.nats.svc.cluster.local:4222"
+                                    value: {{ $.Values.nats.url | quote }}
                                 -   name: REDIS_HOST
-                                    value: "redis-master.ard.svc.cluster.local"
+                                    value: {{ $.Values.redis.host | quote }}
                                 -   name: REDIS_PORT
-                                    value: "6379"
+                                    value: {{ $.Values.redis.port | quote }}
                     restartPolicy: Never
 
+{{- end }}
