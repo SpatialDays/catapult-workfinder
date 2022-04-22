@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-    name: workfinder-complete-s2-mlwater-ard
+    name: workfinder-s2-wofs
 spec:
     schedule: "*/5 * * * *"
     concurrencyPolicy: Forbid
@@ -12,7 +12,7 @@ spec:
             template:
                 spec:
                     containers:
-                        -   name: workfinder-complete-s2-mlwater-ard
+                        -   name: workfinder-s2-wofs
                             image: "satapps/workfinder:0.2.32"
                             imagePullPolicy: IfNotPresent
                             command:
@@ -21,7 +21,7 @@ spec:
                                 - workfinder.workfinder
                                 - --limit
                                 - "100"
-                                - S2_MLWATER_ARD
+                                - S2_WOFS
                             env:
                                 -   name: APP_REGION
                                     value: "Fiji"

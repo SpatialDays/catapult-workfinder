@@ -1,0 +1,7 @@
+type: application
+apiVersion: v2
+
+name: workfinder
+description: helm charts for deploying the workfinder tools
+
+version: 0.2.25
