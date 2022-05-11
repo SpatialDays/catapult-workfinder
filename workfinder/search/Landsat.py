@@ -25,7 +25,7 @@ class Landsat8(BaseWorkFinder):
         rows_df = self._get_rows_paths()
         df = _download_metadata()
         logging.info("finding scenes")
-        df = df[df['WRS Path'].isin(rows_df['ROW'].values) & df['WRS Path'].isin(rows_df['PATH'].values)]
+        df = df[df['WRS Path'].isin(rows_df['ROW'].values) & df['WRS Path'].isin(rows_df['PATH'].values) & df['Satellite'] == "8"]
         logging.info("converting to required objects")
         logging.info(df.columns)
         logging.info(df.head(1))
