@@ -1,6 +1,6 @@
 image:
   repository: "satapps/workfinder"
-  tag: "0.2.35"
+  tag: "0.2.36"
   pullPolicy: IfNotPresent
 
 region: "fiji"
