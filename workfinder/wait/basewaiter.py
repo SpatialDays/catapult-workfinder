@@ -40,16 +40,17 @@ class BaseWaiter(object):
         # for each entry check the order
         # if not ready put back in the redis queue
         # if ready send to target
+
         for item in to_check:
-            payload = json.loads(item)
-            logging.info(f"checking on {item}")
-            if self.check_order(payload['order_id']):
-                try:
+            try:
+                payload = json.loads(item)
+                logging.info(f"checking on {item}")
+                if self.check_order(payload['order_id']):
                     logging.info(f"{payload['order_id']} completed!")
                     self.send_complete_order(payload)
-                except Exception as e:
-                    logging.info(f"{payload['order_id']} failed to send, will retry, {e}")
+                else:
+                    logging.info(f"{payload['order_id']} still pending")
                     self.q.publish(queue_name, item)
-            else:
-                logging.info(f"{payload['order_id']} still pending")
+            except Exception as e:
+                logging.info(f"Could not process {item}, {e}, putting back in queue")
                 self.q.publish(queue_name, item)

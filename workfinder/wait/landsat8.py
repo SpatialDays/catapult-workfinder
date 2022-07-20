@@ -50,9 +50,12 @@ class Landsat8(BaseWaiter):
                 raise Exception("unknown landsat url")
             # build payload object
             # TODO: this s3_dir should to be configurable
-            payload = {"in_scene": url, "s3_bucket": target_bucket, "s3_dir": f"common_sensing/{region.lower()}/{nm}/"}
+            payload = json.dumps(
+                {"in_scene": url, "s3_bucket": target_bucket, "s3_dir": f"common_sensing/{region.lower()}/{nm}/"}
+            )
             # send to redis
-            self.q.publish(target_queue, json.dumps(payload))
+            logging.info(f"sending payload {payload}")
+            self.q.publish(target_queue, payload)
 
     def get_redis_source_queue(self):
         return get_config("landsat8", "redis_pending_channel")
