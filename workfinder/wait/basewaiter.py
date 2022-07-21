@@ -1,6 +1,7 @@
 import abc
 import json
 import logging
+import sys
 
 from libcatapult.queues.base_queue import BaseQueue
 from libcatapult.queues.redis import RedisQueue
@@ -40,7 +41,7 @@ class BaseWaiter(object):
         # for each entry check the order
         # if not ready put back in the redis queue
         # if ready send to target
-
+        errored = False
         for item in to_check:
             try:
                 payload = json.loads(item)
@@ -54,3 +55,7 @@ class BaseWaiter(object):
             except Exception as e:
                 logging.info(f"Could not process {item}, {e}, putting back in queue")
                 self.q.publish(queue_name, item)
+                errored = True
+
+        if errored:
+            sys.exit("there was an error")
