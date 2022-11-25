@@ -56,7 +56,6 @@ processors = {
 @click.option('--limit', default=-1, help='Number records to process', )
 @click.argument("process")
 def main(process, limit):
-    print("Limit is: ", limit)
     param = process.upper()
     if param in processors:
         logging.info(f"starting work search for {param}")
@@ -68,12 +67,8 @@ def main(process, limit):
         if limit > 5000:
             limit = 5000
         logging.info(f"Processing limit is set to {limit}")
-        if limit == 1:
-            reduced_pandas_frame = work.iloc[0:1]
-            processors[param].submit_tasks(reduced_pandas_frame)
-        else:
-            reduced_pandas_frame = work.iloc[0:limit]
-            processors[param].submit_tasks(reduced_pandas_frame)
+        reduced_pandas_frame = work.iloc[0:limit]
+        processors[param].submit_tasks(reduced_pandas_frame)
         logging.info(f"done work search for {param}")
     else:
         logging.error(f"unknown processor type {param}")
