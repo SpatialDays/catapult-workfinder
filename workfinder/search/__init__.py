@@ -11,7 +11,7 @@ from pathlib import Path
 import geopandas as gpd
 import pandas as pd
 from libcatapult.storage.s3_tools import NoObjectError
-from pystac import Collection
+from pystac import Collection, STAC_IO
 
 from workfinder import get_config
 from workfinder.api.s3 import S3Api
@@ -90,6 +90,7 @@ def list_catalog(s3: S3Api, collection_path: str):
     try:
         catalog_body = s3.get_object_body(collection_path)
         catalog = json.loads(catalog_body.decode('utf-8'))
+        STAC_IO.read_text_method = s3.stac_read_method
         collection = Collection.from_dict(catalog)
         result = [i.id for i in collection.get_items()]
     except NoObjectError:
