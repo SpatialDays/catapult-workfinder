@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import shutil
+import time
 
 import requests
 
@@ -10,6 +11,7 @@ from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
+from shapely import wkt
 from libcatapult.storage.s3_tools import NoObjectError
 from pystac import Collection, STAC_IO
 
@@ -32,9 +34,8 @@ def get_aoi(s3: S3Api, region: str):
     aoi = borders.loc[borders.NAME == region]
     if aoi.empty:
         raise ValueError(f"region \"{region}\" not found in world borders file")
-    envelope = aoi.to_crs(get_crs()).envelope
-    value = envelope.to_crs({"init": "epsg:4326"}).values[0]
-    return value
+    wkt =  aoi.geometry.values[0]
+    return wkt
 
 
 def get_world_borders(s3: S3Api):
@@ -66,6 +67,9 @@ def download_ancillary_file(s3: S3Api, name, remote_path):
         logging.info(f'Downloading {remote}')
         s3.fetch_file(remote, local)
         logging.info(f'Downloaded {remote}')
+    elif os.path.getmtime(local) < (time.time() - 604800):
+        logging.info(f'{name} older than a week, re-downloading')
+        s3.fetch_file(remote, local)
     else:
         logging.info(f'{name} already available')
 

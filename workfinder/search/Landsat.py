@@ -26,8 +26,9 @@ class Landsat8(BaseWorkFinder):
         df = _download_metadata()
         logging.info("finding scenes")
         df = df[
-            (df['WRS Path'].isin(rows_df['ROW'].values) & df['WRS Path'].isin(rows_df['PATH'].values)) &
-            (df['Satellite'] == 8)
+            (df['WRS Row'].isin(rows_df['ROW'].values) & df['WRS Path'].isin(rows_df['PATH'].values)) &
+            (df['Satellite'] == 8) & 
+            (df['Landsat Product Identifier L1'].str.contains('L1TP'))
         ]
         logging.info("converting to required objects")
         logging.info(df.columns)
@@ -37,7 +38,7 @@ class Landsat8(BaseWorkFinder):
 
     def find_already_done_list(self):
         region = get_config("app", "region")
-        return get_ard_list(self._s3, f"common_sensing/{region.lower()}/landsat_8/")
+        return get_ard_list(self._s3, f"common_sensing/{region.lower()}/landsat_8/") # TODO: Remove hardcoding 
 
     def submit_tasks(self, to_do_list: pd.DataFrame):
         if to_do_list is not None and len(to_do_list) > 0:
@@ -51,17 +52,12 @@ class Landsat8(BaseWorkFinder):
             self._redis.close()
 
     def _get_rows_paths(self):
-        region = get_config("app", "region")
-        aoi = get_aoi(self._s3, region)
+        region = get_config("app", "region") # TODO: this should be a parameter
+        aoi = get_aoi(self._s3, region) # Downloads the world borders file from S3
         file_path = download_ancillary_file(self._s3, "WRS2_descending.geojson",
-                                            "SatelliteSceneTiles/landsat_pr/WRS2_descending.geojson")
+                                            "SatelliteSceneTiles/landsat_pr/WRS2_descending.geojson") # Downloads the WRS2_descending.geojson file from S3
         world_granules = gpd.read_file(file_path)
-        # Create bool for intersection between any tiles - should try inversion to speed up...
-        world_granules[region] = world_granules.geometry.apply(lambda x: gpd.GeoSeries(x).intersects(aoi))
-        # Filter based on any True intersections
-        world_granules[region] = world_granules[world_granules[region]].any(1)
-        # NOTE: this line will show a warning in pycharm that the == should be is however for the pandas magic to work
-        # it must be ==
+        world_granules[region] = world_granules.geometry.apply(lambda x: x.intersects(aoi))
         region_ls_grans = world_granules[world_granules[region] == True]
         return region_ls_grans
 
@@ -112,5 +108,4 @@ def _download_metadata():
 
 
 def _apply_row_mapping(row):
-    # logging.info(row)
     return {'id': row['Landsat Product Identifier L1'][:25], 'url': row['Landsat Product Identifier L1']}

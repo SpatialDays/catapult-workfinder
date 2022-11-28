@@ -10,3 +10,4 @@ asyncio-nats-client==0.11.4
 pystac~=0.5.4
 requests
 click
+geopandas
