@@ -1,5 +1,9 @@
 from libcatapult.storage.s3_tools import S3Utils
+import logging
+import boto3
 
+from urllib.parse import urlparse
+from pystac import STAC_IO
 
 class NotConnectedException(Exception):
     pass
@@ -37,3 +41,19 @@ class S3Api(object):
             raise NotConnectedException("must call S3API.get_s3_connection() before using S3API.fetch_file")
 
         return self.s3_conn.fetch_file(source, dest)
+
+    
+
+    def stac_read_method(self, uri):
+        parsed = urlparse(uri)
+        s3 = boto3.resource('s3')
+        try:
+            key = parsed.path[1:]
+            logging.info(f"Reading {key}")
+            body = s3.Object(self.bucket_name, key).get()['Body'].read()
+            return body.decode('utf-8')
+        except:
+            try:
+                return STAC_IO.default_read_text_method(uri)
+            except:
+                raise

@@ -85,13 +85,13 @@ class Landsat8(BaseWorkFinder):
         order['note'] = f"CS_{get_config('app', 'region')}_regular"
         order['projection'] = projection
 
-        for k, v in order.items():
-            if "_collection" in k:
-                if "source_metadata" not in order[k]["products"]:
-                    order[k]["products"] += ["source_metadata"]
-
-                if "pixel_qa" not in order[k]["products"]:
-                    order[k]["products"] += ["pixel_qa"]
+        # for k, v in order.items():
+        #     if "_collection" in k:
+        #         if "source_metadata" not in order[k]["products"]:
+        #             order[k]["products"] += ["source_metadata"]
+        #
+        #         if "pixel_qa" not in order[k]["products"]:
+        #             order[k]["products"] += ["pixel_qa"]
 
         logging.info(json.dumps(order))
         # POST https://espa.cr.usgs.gov/api/v1/order
