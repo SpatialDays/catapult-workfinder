@@ -41,7 +41,11 @@ class BaseArdWorkFinder(BaseWorkFinder):
             path = '/'.join(r['url'].split('/')[0:-1]) + '/'
             logging.info(f"publishing {r['url']} as {path}")
             self.nats.publish(item_channel, path)
-        self.nats.close()
+
+        try:
+            self.nats.close()
+        except:
+            pass
 
     def find_work_list(self):
         self.s3.get_s3_connection()
