@@ -11,6 +11,7 @@ from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
+from shapely import wkt
 from libcatapult.storage.s3_tools import NoObjectError
 from pystac import Collection
 
@@ -33,9 +34,8 @@ def get_aoi(s3: S3Api, region: str):
     aoi = borders.loc[borders.NAME == region]
     if aoi.empty:
         raise ValueError(f"region \"{region}\" not found in world borders file")
-    envelope = aoi.to_crs(get_crs()).envelope
-    value = envelope.to_crs({"init": "epsg:4326"}).values[0]
-    return value
+    wkt =  aoi.geometry.values[0]
+    return wkt
 
 
 def get_world_borders(s3: S3Api):
