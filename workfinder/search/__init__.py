@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import shutil
+import time
 
 import requests
 
@@ -66,6 +67,9 @@ def download_ancillary_file(s3: S3Api, name, remote_path):
         logging.info(f'Downloading {remote}')
         s3.fetch_file(remote, local)
         logging.info(f'Downloaded {remote}')
+    elif os.path.getmtime(local) < (time.time() - 604800):
+        logging.info(f'{name} older than a week, re-downloading')
+        s3.fetch_file(remote, local)
     else:
         logging.info(f'{name} already available')
 
