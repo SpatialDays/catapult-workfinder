@@ -22,7 +22,10 @@ class LandsatARD (BaseWorkFinder):
         for index, r in to_do_list.iterrows():
             logging.info(f"publishing {r['url']}")
             self.nats.publish(channel, r['url'])
-        self.nats.close()
+        try:
+            self.nats.close()
+        except:
+            pass
 
     def find_work_list(self):
         self.s3.get_s3_connection()
