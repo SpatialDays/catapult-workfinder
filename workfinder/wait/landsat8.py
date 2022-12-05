@@ -21,6 +21,7 @@ class Landsat8(BaseWaiter):
         order_as_list: List[Dict] = resp[order_id]
 
         completed_orders = [x for x in order_as_list if x['status'] == 'complete']
+        completed_orders.sort(key=lambda x: datetime.datetime.strptime(x['completion_date'], '%Y-%m-%d %H:%M:%S.%f'))
         if len(completed_orders):
             most_recent_completion_date = datetime.datetime.strptime(completed_orders[0]['completion_date'], '%Y-%m-%d %H:%M:%S.%f')
             return all([item['status'] not in ['complete', 'unavailable'] for item in order_as_list]) \
