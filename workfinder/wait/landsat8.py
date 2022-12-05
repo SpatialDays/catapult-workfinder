@@ -1,6 +1,7 @@
 import json
 import logging
 from typing import List, Dict
+import datetime
 
 from libcatapult.queues.base_queue import BaseQueue
 
@@ -18,13 +19,14 @@ class Landsat8(BaseWaiter):
     def check_order(self, order_id: str):
         resp = self.espa.call(f'item-status/{order_id}')
         order_as_list: List[Dict] = resp[order_id]
-        # only if each dict in the list has a status of complete or unavailable return true
-        # return all([x['status'] in ['complete', 'unavailable'] for x in order_as_list])
-        for i in order_as_list:
-            if i['status'] not in ['complete', 'unavailable']:
-                logging.info(f"Item {i['name']} in order {order_id} is not complete or unavailable")
-                return False
-        return True
+
+        completed_orders = [x for x in order_as_list if x['status'] == 'complete']
+        completed_orders.sort(key=lambda x: datetime.datetime.strptime(x['completion_date'], '%Y-%m-%d %H:%M:%S.%f'))
+        if len(completed_orders):
+            most_recent_completion_date = datetime.datetime.strptime(completed_orders[0]['completion_date'], '%Y-%m-%d %H:%M:%S.%f')
+            return all([item['status'] not in ['complete', 'unavailable'] for item in order_as_list]) \
+            or (most_recent_completion_date + datetime.timedelta(days=1)) < datetime.datetime.now()
+        return False
 
     def send_complete_order(self, order_details: dict):
         order_id = order_details['order_id']
