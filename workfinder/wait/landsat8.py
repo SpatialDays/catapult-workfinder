@@ -59,10 +59,10 @@ class Landsat8(BaseWaiter):
                 raise Exception("unknown landsat url")
             # build payload object
             item_name = item['name']
-            # TODO: this s3_dir should to be configurable
+            aws_path_prefix = get_config("AWS", "PATH_PREFIX")
             payload = json.dumps(
                 {"in_scene": url, "s3_bucket": target_bucket, "item": item_name,
-                 "s3_dir": f"common_sensing/{region.lower()}/{nm}/"}
+                 "s3_dir": f"{aws_path_prefix}/{region.lower()}/{nm}/"}
             )
             # send to redis
             logging.info(f"sending payload {payload}")
