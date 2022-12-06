@@ -29,12 +29,13 @@ class S1(BaseWorkFinder):
             # get redis connection
             self._redis.connect()
             # submit each task.
+            aws_path_prefix = get_config("AWS", "PATH_PREFIX")
             for index, e in to_do_list.iterrows():
                 payload = {
                     "in_scene": e['id'],
                     "s3_bucket": "public-eo-data",
                     "s3_dir": "test/sentinel_1/",
-                    "ext_dem": f"common_sensing/ancillary_products/SRTM1Sec/SRTM30_Fiji_{e['hemisphere']}.tif"}
+                    "ext_dem": f"{aws_path_prefix}/ancillary_products/SRTM1Sec/SRTM30_Fiji_{e['hemisphere']}.tif"}
                 self._redis.publish(channel, json.dumps(payload))
 
     def find_work_list(self):
@@ -63,7 +64,8 @@ class S1(BaseWorkFinder):
 
     def find_already_done_list(self):
         region = get_config("app", "region")
-        return get_ard_list(f"common_sensing/{region.lower()}/sentinel_1/")
+        aws_path_prefix = get_config("AWS", "PATH_PREFIX")
+        return get_ard_list(f"{aws_path_prefix}/{region.lower()}/sentinel_1/")
 
 
 def get_s1_asf_urls(s1_name_list: pd.Series):

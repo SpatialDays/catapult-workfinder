@@ -50,7 +50,8 @@ class BaseArdWorkFinder(BaseWorkFinder):
     def find_work_list(self):
         self.s3.get_s3_connection()
         region = get_config("app", "region")
-        return get_ard_list(self.s3, f"common_sensing/{region.lower()}/{self.get_sensor_name()}/")
+        aws_path_prefix = get_config("AWS", "PATH_PREFIX")
+        return get_ard_list(self.s3, f"{aws_path_prefix}/{region.lower()}/{self.get_sensor_name()}/")
 
     def find_already_done_list(self):
         self.s3.get_s3_connection()

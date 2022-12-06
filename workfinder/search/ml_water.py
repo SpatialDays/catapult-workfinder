@@ -26,12 +26,13 @@ class BaseMLWater(BaseWofs):
         target_bucket = get_config("AWS", "bucket")
         target_queue = get_config("ml_water", "redis_channel")
         wofs_summary = get_config("ml_water", "wofs_summary_path")
+        aws_path_prefix = get_config("AWS", "PATH_PREFIX")
         for r in to_do_list.tolist():
             payload = {
                 "img_yml_path": r['url'],
                 "lab_yml_path": wofs_summary,
                 "s3_bucket": target_bucket,
-                "s3_dir": f"common_sensing/{region.lower()}/{self.get_target_name()}/"
+                "s3_dir": f"{aws_path_prefix}/{region.lower()}/{self.get_target_name()}/"
             }
             self._redis.publish(target_queue, json.dumps(payload))
 

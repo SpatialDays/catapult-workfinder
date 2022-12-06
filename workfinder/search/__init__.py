@@ -59,7 +59,8 @@ def get_ancillary_dir():
 
 def download_ancillary_file(s3: S3Api, name, remote_path):
     anc_dir = get_ancillary_dir()
-    anc_dir_rem = 'common_sensing/ancillary_products/'
+    aws_path_prefix = get_config("AWS", "PATH_PREFIX")
+    anc_dir_rem = f'{aws_path_prefix}/ancillary_products/'
     local = os.path.join(anc_dir, name)
     remote = os.path.join(anc_dir_rem, remote_path)
 
@@ -71,7 +72,7 @@ def download_ancillary_file(s3: S3Api, name, remote_path):
         logging.info(f'{name} older than a week, re-downloading')
         s3.fetch_file(remote, local)
     else:
-        logging.info(f'{name} already available')
+        logging.info(f'{name} already available at path {local}')
 
     return local
 
