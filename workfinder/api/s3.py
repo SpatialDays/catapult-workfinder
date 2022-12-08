@@ -1,9 +1,9 @@
-from libcatapult.storage.s3_tools import S3Utils
+from libcatapult.storage.s3_tools import S3Utils # TODO: GET RID OF LIBCATAPULT
 import logging
-import boto3
 
 from urllib.parse import urlparse
 from pystac import STAC_IO
+
 
 class NotConnectedException(Exception):
     pass
@@ -42,11 +42,9 @@ class S3Api(object):
 
         return self.s3_conn.fetch_file(source, dest)
 
-    
-
     def stac_read_method(self, uri):
         parsed = urlparse(uri)
-        s3 = boto3.resource('s3')
+        s3 = self.s3_conn.s3
         try:
             key = parsed.path[1:]
             logging.info(f"Reading {key}")
