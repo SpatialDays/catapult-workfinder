@@ -31,25 +31,25 @@ class BaseWofs(BaseWorkFinder):
     def find_work_list(self):
         self._s3.get_s3_connection()
         region = get_config("app", "region")
-        aws_path_prefix = get_config("AWS", "PATH_PREFIX")
-        return get_ard_list(self._s3, f"{aws_path_prefix}/{region.lower()}/{self.get_source_sensor_name()}/")
+        imagery_path = get_config("S3", "IMAGERY_PATH")
+        return get_ard_list(self._s3, f"{imagery_path}/{region.lower()}/{self.get_source_sensor_name()}/")
 
     def find_already_done_list(self):
         self._s3.get_s3_connection()
         region = get_config("app", "region")
-        aws_path_prefix = get_config("AWS", "PATH_PREFIX")
-        return get_ard_list(self._s3, f"{aws_path_prefix}/{region.lower()}/{self.get_target_name()}/")
+        imagery_path = get_config("S3", "IMAGERY_PATH")
+        return get_ard_list(self._s3, f"{imagery_path}/{region.lower()}/{self.get_target_name()}/")
 
     def submit_tasks(self, to_do_list: pd.DataFrame):
         region = get_config("app", "region")
         target_bucket = get_config("AWS", "bucket")
-        target_queue = get_config("s2", "redis_channel")
-        aws_path_prefix = get_config("AWS", "PATH_PREFIX")
+        target_queue = get_config("s2", "redis_processed_channel")
+        imagery_path = get_config("S3", "IMAGERY_PATH")
         for r in to_do_list.tolist():
             payload = {
                 "optical_yaml_path": r['url'],
                 "s3_bucket": target_bucket,
-                "s3_dir": f"{aws_path_prefix}/{region.lower()}/{self.get_target_name()}/"
+                "s3_dir": f"{imagery_path}/{region.lower()}/{self.get_target_name()}/"
             }
             self._redis.publish(target_queue, json.dumps(payload))
 

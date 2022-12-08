@@ -30,8 +30,8 @@ class LandsatARD (BaseWorkFinder):
     def find_work_list(self):
         self.s3.get_s3_connection()
         region = get_config("app", "region")
-        aws_path_prefix = get_config("AWS", "PATH_PREFIX")
-        return get_ard_list(self.s3, f"{aws_path_prefix}/{region.lower()}/landsat_8/")
+        imagery_path = get_config("S3", "IMAGERY_PATH")
+        return get_ard_list(self.s3, f"{imagery_path}/{region.lower()}/landsat_8/")
 
     def find_already_done_list(self):
         self.s3.get_s3_connection()

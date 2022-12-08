@@ -14,7 +14,10 @@ class Landsat8ARD (BaseArdWorkFinder):
         return "landsat_8"
 
     def get_stac_key(self):
-        return get_config("landsat_ard", "stac_collection_path_8")
+        stac_path = get_config("S3", "STAC_PATH")
+        collection_path = get_config("LANDSAT_ARD", "STAC_COLLECTION_PATH_8")
+        return f"{stac_path}/{collection_path}"        
+
 
 
 class Landsat7ARD (BaseArdWorkFinder):
@@ -26,7 +29,9 @@ class Landsat7ARD (BaseArdWorkFinder):
         return "landsat_7"
 
     def get_stac_key(self):
-        return get_config("landsat_ard", "stac_collection_path_7")
+        stac_path = get_config("S3", "STAC_PATH")
+        collection_path = get_config("LANDSAT_ARD", "STAC_COLLECTION_PATH_7")
+        return f"{stac_path}/{collection_path}"          
 
 
 class Landsat5ARD (BaseArdWorkFinder):
@@ -38,7 +43,9 @@ class Landsat5ARD (BaseArdWorkFinder):
         return "landsat_5"
 
     def get_stac_key(self):
-        return get_config("landsat_ard", "stac_collection_path_5")
+        stac_path = get_config("S3", "STAC_PATH")
+        collection_path = get_config("LANDSAT_ARD", "STAC_COLLECTION_PATH_5")
+        return f"{stac_path}/{collection_path}"  
 
 
 class Landsat4ARD (BaseArdWorkFinder):
@@ -50,5 +57,6 @@ class Landsat4ARD (BaseArdWorkFinder):
         return "landsat_4"
 
     def get_stac_key(self):
-        return get_config("landsat_ard", "stac_collection_path_4")
-
+        stac_path = get_config("S3", "STAC_PATH")
+        collection_path = get_config("LANDSAT_ARD", "STAC_COLLECTION_PATH_4")
+        return f"{stac_path}/{collection_path}"  

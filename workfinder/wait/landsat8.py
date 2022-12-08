@@ -31,7 +31,7 @@ class Landsat8(BaseWaiter):
     def send_complete_order(self, order_details: dict):
         order_id = order_details['order_id']
         resp = self.espa.call(f"item-status/{order_details['order_id']}", body={'status': 'complete'})
-        target_queue = get_config("landsat8", "redis_channel")
+        target_queue = get_config("landsat8", "redis_processed_channel")
         target_bucket = get_config("AWS", "bucket")
         region = get_config("app", "region")
 
@@ -59,10 +59,10 @@ class Landsat8(BaseWaiter):
                 raise Exception("unknown landsat url")
             # build payload object
             item_name = item['name']
-            aws_path_prefix = get_config("AWS", "PATH_PREFIX")
+            imagery_path = get_config("S3", "IMAGERY_PATH")
             payload = json.dumps(
                 {"in_scene": url, "s3_bucket": target_bucket, "item": item_name,
-                 "s3_dir": f"{aws_path_prefix}/{region.lower()}/{nm}/"}
+                 "s3_dir": f"{imagery_path}/{region.lower()}/{nm}/"}
             )
             # send to redis
             logging.info(f"sending payload {payload}")

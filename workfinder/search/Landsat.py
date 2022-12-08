@@ -38,8 +38,8 @@ class Landsat8(BaseWorkFinder):
 
     def find_already_done_list(self):
         region = get_config("app", "region")
-        aws_path_prefix = get_config("AWS", "PATH_PREFIX")
-        return get_ard_list(self._s3, f"{aws_path_prefix}/{region.lower()}/landsat_8/") # TODO: Remove hardcoding 
+        imagery_path = get_config("S3", "IMAGERY_PATH")
+        return get_ard_list(self._s3, f"{imagery_path}/{region.lower()}/landsat_8/") # TODO: Remove hardcoding 
 
     def submit_tasks(self, to_do_list: pd.DataFrame):
         if to_do_list is not None and len(to_do_list) > 0:

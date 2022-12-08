@@ -25,17 +25,17 @@ class S1(BaseWorkFinder):
     def submit_tasks(self, to_do_list: pd.DataFrame):
 
         if to_do_list is not None and len(to_do_list) > 0:
-            channel = get_config("s1", "redis_channel")
+            channel = get_config("s1", "redis_processed_channel")
             # get redis connection
             self._redis.connect()
             # submit each task.
-            aws_path_prefix = get_config("AWS", "PATH_PREFIX")
+            imagery_path = get_config("S3", "IMAGERY_PATH")
             for index, e in to_do_list.iterrows():
                 payload = {
                     "in_scene": e['id'],
                     "s3_bucket": "public-eo-data",
                     "s3_dir": "test/sentinel_1/",
-                    "ext_dem": f"{aws_path_prefix}/ancillary_products/SRTM1Sec/SRTM30_Fiji_{e['hemisphere']}.tif"}
+                    "ext_dem": f"{imagery_path}/ancillary_products/SRTM1Sec/SRTM30_Fiji_{e['hemisphere']}.tif"}
                 self._redis.publish(channel, json.dumps(payload))
 
     def find_work_list(self):
@@ -64,8 +64,8 @@ class S1(BaseWorkFinder):
 
     def find_already_done_list(self):
         region = get_config("app", "region")
-        aws_path_prefix = get_config("AWS", "PATH_PREFIX")
-        return get_ard_list(f"{aws_path_prefix}/{region.lower()}/sentinel_1/")
+        imagery_path = get_config("S3", "IMAGERY_PATH")
+        return get_ard_list(f"{imagery_path}/{region.lower()}/sentinel_1/")
 
 
 def get_s1_asf_urls(s1_name_list: pd.Series):

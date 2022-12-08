@@ -59,8 +59,8 @@ def get_ancillary_dir():
 
 def download_ancillary_file(s3: S3Api, name, remote_path):
     anc_dir = get_ancillary_dir()
-    aws_path_prefix = get_config("AWS", "PATH_PREFIX")
-    anc_dir_rem = f'{aws_path_prefix}/ancillary_products/'
+    imagery_path = get_config("S3", "IMAGERY_PATH")
+    anc_dir_rem = f'{imagery_path}/ancillary_products/'
     local = os.path.join(anc_dir, name)
     remote = os.path.join(anc_dir_rem, remote_path)
 

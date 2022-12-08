@@ -24,15 +24,15 @@ class BaseMLWater(BaseWofs):
     def submit_tasks(self, to_do_list: pd.DataFrame):
         region = get_config("app", "region")
         target_bucket = get_config("AWS", "bucket")
-        target_queue = get_config("ml_water", "redis_channel")
+        target_queue = get_config("ml_water", "redis_processed_channel")
         wofs_summary = get_config("ml_water", "wofs_summary_path")
-        aws_path_prefix = get_config("AWS", "PATH_PREFIX")
+        imagery_path = get_config("S3", "IMAGERY_PATH")
         for r in to_do_list.tolist():
             payload = {
                 "img_yml_path": r['url'],
                 "lab_yml_path": wofs_summary,
                 "s3_bucket": target_bucket,
-                "s3_dir": f"{aws_path_prefix}/{region.lower()}/{self.get_target_name()}/"
+                "s3_dir": f"{imagery_path}/{region.lower()}/{self.get_target_name()}/"
             }
             self._redis.publish(target_queue, json.dumps(payload))
 
