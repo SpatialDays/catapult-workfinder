@@ -3,15 +3,11 @@ import logging
 import os
 import shutil
 import time
-
-import requests
-
-from urllib import request
 from pathlib import Path
+from urllib import request
 
 import geopandas as gpd
 import pandas as pd
-from shapely import wkt
 from libcatapult.storage.s3_tools import NoObjectError
 from pystac import Collection, STAC_IO
 
@@ -20,7 +16,7 @@ from workfinder.api.s3 import S3Api
 
 
 def get_crs():
-    crs = get_config("app", "crs")
+    crs = get_config("APP", "CRS")
     return {"init": crs}
 
 
@@ -34,7 +30,7 @@ def get_aoi(s3: S3Api, region: str):
     aoi = borders.loc[borders.NAME == region]
     if aoi.empty:
         raise ValueError(f"region \"{region}\" not found in world borders file")
-    wkt =  aoi.geometry.values[0]
+    wkt = aoi.geometry.values[0]
     return wkt
 
 
@@ -50,7 +46,7 @@ def get_gpd_file(s3: S3Api, name, remote_path):
 
 
 def get_ancillary_dir():
-    inter_dir = get_config("app", "temp_dir")
+    inter_dir = get_config("APP", "TEMP_DIR")
     anc_dir = os.path.join(inter_dir, "ancillary")
     os.makedirs(os.path.join(inter_dir, "outputs"), exist_ok=True)
     os.makedirs(anc_dir, exist_ok=True)
@@ -122,4 +118,3 @@ def get_ard_list(s3: S3Api, folder: str):
 def _extract_id_ard_path(p: str):
     parts = Path(os.path.split(p)[0]).stem
     return parts
-

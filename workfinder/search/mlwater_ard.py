@@ -14,7 +14,7 @@ class Landsat8MlWaterArd(BaseArdWorkFinder):
     def get_stac_key(self):
         stac_path = get_config("S3", "STAC_PATH")
         collection_path = get_config("LANDSAT_ARD", "STAC_COLLECTION_PATH_8_MLWATER")
-        return f"{stac_path}/{collection_path}"    
+        return f"{stac_path}/{collection_path}"
 
 
 class Landsat7MlWaterArd(BaseArdWorkFinder):
@@ -27,7 +27,7 @@ class Landsat7MlWaterArd(BaseArdWorkFinder):
     def get_stac_key(self):
         stac_path = get_config("S3", "STAC_PATH")
         collection_path = get_config("LANDSAT_ARD", "STAC_COLLECTION_PATH_7_MLWATER")
-        return f"{stac_path}/{collection_path}"    
+        return f"{stac_path}/{collection_path}"
 
 
 class Landsat5MlWaterArd(BaseArdWorkFinder):
@@ -40,7 +40,7 @@ class Landsat5MlWaterArd(BaseArdWorkFinder):
     def get_stac_key(self):
         stac_path = get_config("S3", "STAC_PATH")
         collection_path = get_config("LANDSAT_ARD", "STAC_COLLECTION_PATH_5_MLWATER")
-        return f"{stac_path}/{collection_path}"    
+        return f"{stac_path}/{collection_path}"
 
 
 class Sentinel2MlWaterArd(BaseArdWorkFinder):
@@ -53,7 +53,7 @@ class Sentinel2MlWaterArd(BaseArdWorkFinder):
     def get_stac_key(self):
         stac_path = get_config("S3", "STAC_PATH")
         collection_path = get_config("S2_ARD", "STAC_COLLECTION_PATH_MLWATER")
-        return f"{stac_path}/{collection_path}"    
+        return f"{stac_path}/{collection_path}"
 
 
 class Sentinel1MlWaterArd(BaseArdWorkFinder):
@@ -66,5 +66,4 @@ class Sentinel1MlWaterArd(BaseArdWorkFinder):
     def get_stac_key(self):
         stac_path = get_config("S3", "STAC_PATH")
         collection_path = get_config("S1_ARD", "STAC_COLLECTION_PATH_MLWATER")
-        return f"{stac_path}/{collection_path}"    
-
+        return f"{stac_path}/{collection_path}"

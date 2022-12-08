@@ -49,7 +49,7 @@ class BaseArdWorkFinder(BaseWorkFinder):
 
     def find_work_list(self):
         self.s3.get_s3_connection()
-        region = get_config("app", "region")
+        region = get_config("APP", "REGION")
         imagery_path = get_config("S3", "IMAGERY_PATH")
         return get_ard_list(self.s3, f"{imagery_path}/{region.lower()}/{self.get_sensor_name()}/")
 

@@ -30,20 +30,20 @@ class BaseWofs(BaseWorkFinder):
 
     def find_work_list(self):
         self._s3.get_s3_connection()
-        region = get_config("app", "region")
+        region = get_config("APP", "REGION")
         imagery_path = get_config("S3", "IMAGERY_PATH")
         return get_ard_list(self._s3, f"{imagery_path}/{region.lower()}/{self.get_source_sensor_name()}/")
 
     def find_already_done_list(self):
         self._s3.get_s3_connection()
-        region = get_config("app", "region")
+        region = get_config("APP", "REGION")
         imagery_path = get_config("S3", "IMAGERY_PATH")
         return get_ard_list(self._s3, f"{imagery_path}/{region.lower()}/{self.get_target_name()}/")
 
     def submit_tasks(self, to_do_list: pd.DataFrame):
-        region = get_config("app", "region")
-        target_bucket = get_config("AWS", "bucket")
-        target_queue = get_config("s2", "redis_processed_channel")
+        region = get_config("APP", "REGION")
+        target_bucket = get_config("S3", "BUCKET")
+        target_queue = get_config("S2", "REDIS_PROCESSED_CHANNEL")
         imagery_path = get_config("S3", "IMAGERY_PATH")
         for r in to_do_list.tolist():
             payload = {

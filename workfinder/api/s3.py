@@ -1,7 +1,7 @@
-from libcatapult.storage.s3_tools import S3Utils # TODO: GET RID OF LIBCATAPULT
 import logging
-
 from urllib.parse import urlparse
+
+from libcatapult.storage.s3_tools import S3Utils
 from pystac import STAC_IO
 
 

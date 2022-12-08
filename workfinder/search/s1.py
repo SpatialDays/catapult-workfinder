@@ -2,9 +2,9 @@ import json
 import logging
 import math
 
+import geopandas as gpd
 import numpy
 import pandas as pd
-import geopandas as gpd
 from libcatapult.queues.base_queue import BaseQueue
 from sentinelsat import SentinelAPI
 
@@ -16,7 +16,7 @@ from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 class S1(BaseWorkFinder):
 
-    def __init__(self, s3: S3Api, redis: BaseQueue, esa_api:SentinelAPI):
+    def __init__(self, s3: S3Api, redis: BaseQueue, esa_api: SentinelAPI):
         super().__init__()
         self._s3 = s3
         self._redis = redis
@@ -25,7 +25,7 @@ class S1(BaseWorkFinder):
     def submit_tasks(self, to_do_list: pd.DataFrame):
 
         if to_do_list is not None and len(to_do_list) > 0:
-            channel = get_config("s1", "redis_processed_channel")
+            channel = get_config("S1", "REDIS_PROCESSED_CHANNEL")
             # get redis connection
             self._redis.connect()
             # submit each task.
@@ -41,7 +41,7 @@ class S1(BaseWorkFinder):
     def find_work_list(self):
         self._s3.get_s3_connection()
 
-        region = get_config("app", "region")
+        region = get_config("APP", "REGION")
         aoi = get_aoi_wkt(self._s3, region)
         print(self._esa_api.dhus_version)
         res = self._esa_api.query(
@@ -63,7 +63,7 @@ class S1(BaseWorkFinder):
         return scenes
 
     def find_already_done_list(self):
-        region = get_config("app", "region")
+        region = get_config("APP", "REGION")
         imagery_path = get_config("S3", "IMAGERY_PATH")
         return get_ard_list(f"{imagery_path}/{region.lower()}/sentinel_1/")
 

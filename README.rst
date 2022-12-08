@@ -3,16 +3,17 @@ workfinder
 ==========
 
 
-find work for the ard processing.
+Find work for the ard processing.
 
 Run with
 
-`python -m workfinder.workfinder S1`
+`python -m workfinder.workfinder LANDSAT8`
 
 
 * Free software: Apache Software License 2.0
-* Documentation: https://workfinder.readthedocs.io.
 
+Environment variables
+--------
 
 Features
 --------
