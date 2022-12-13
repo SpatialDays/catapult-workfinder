@@ -28,7 +28,7 @@ Environment variables
 |S3_BUCKET | S3 bucket name.|
 |S3_IMAGERY_PATH| Path on the S3 Bucket in which to store the imagery.|
 |S3_STAC_PATH|Path on the S3 Bucket in which to store the STAC metadata for processed imagery.|
-|S1_REDIS_PROCESSED_CHANEL|Redis channel for S1 processed imagery download links and metadata.|
+|S1_REDIS_PROCESSED_CHANNEL|Redis channel for S1 processed imagery download links and metadata.|
 |S1_ARD_STAC_COLLECTION_PATH|Path to collection.json for S1_ARD data on the S3 Bucket. Parent directory is S3_STAC_PATH.|
 |S1_ARD_STAC_COLLECTION_PATH_MLWATER|Path to collection.json for S1_ARD data MLWATER on the S3 Bucket. Parent directory is S3_STAC_PATH.|
 |S2_REDIS_PROCESSED_CHANEL|Redis channel for S2 processed STAC download links and metadata.|
@@ -43,14 +43,10 @@ Environment variables
 |LANDSAT7_ARD_STAC_COLLECTION_PATH_7|STAC collection.json path for LANDSAT7 analysis ready data in S3_STAC_PATH.|
 |LANDSAT7_ARD_STAC_COLLECTION_PATH_7_MLWATER|STAC collection.json path for LANDSAT7 mlwater data in S3_STAC_PATH.|
 |LANDSAT7_ARD_STAC_COLLECTION_PATH_7_WOFS|STAC collection.json path for LANDSAT7 wofs data in S3_STAC_PATH.|
-|LANDSAT6_ARD_STAC_COLLECTION_PATH_6|STAC collection.json path for LANDSAT6 analysis ready data in S3_STAC_PATH.|
-|LANDSAT6_ARD_STAC_COLLECTION_PATH_6_MLWATER|STAC collection.json path for LANDSAT6 mlwater data in S3_STAC_PATH.|
-|LANDSAT6_ARD_STAC_COLLECTION_PATH_6_WOFS|STAC collection.json path for LANDSAT6 wofs data in S3_STAC_PATH.|
 |LANDSAT5_ARD_STAC_COLLECTION_PATH_5|STAC collection.json path for LANDSAT5 analysis ready data in S3_STAC_PATH.|
 |LANDSAT5_ARD_STAC_COLLECTION_PATH_5_MLWATER|STAC collection.json path for LANDSAT5 mlwater data in S3_STAC_PATH.|
 |LANDSAT5_ARD_STAC_COLLECTION_PATH_5_WOFS|STAC collection.json path for LANDSAT5 wofs data in S3_STAC_PATH.|
-|LANDSAT8_ARD_STAC_COLLECTION_PATH_4|STAC collection.json path for LANDSAT4 analysis ready data in S3_STAC_PATH.|
-|ML_WATER_REDIS_PRICESSED_CHANNEL| |
+|ML_WATER_REDIS_PROCESSED_CHANNEL| |
 |ML_WATTER_WOFS_SUMMARY_PATH| |
 
 This package was created with Cookiecutter and the `audreyr/cookiecutter-pypackage` project template.
