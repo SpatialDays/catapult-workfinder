@@ -19,28 +19,29 @@ app:
     tempDir: "/tmp"
 
 workfinder:
-    batchSize: 100
-    cronString: "*/5 * * * *"
+    batchSize: 500
+    cronString: "0 0 * * SAT"
     jobs:
-        - landsat4-ard
-        - landsat5-ard
-        - landsat5-wofs
-        - landsat5-wofs-ard
-        - landsat5-mlwater
-        - landsat5-mlwater-ard
-        - landsat7-ard
-        - landsat7-wofs
-        - landsat7-wofs-ard
-        - landsat7-mlwater
-        - landsat7-mlwater-ard
+        #- landsat4-ard
+        #- landsat5-ard
+        #- landsat5-wofs
+        #- landsat5-wofs-ard
+        #- landsat5-mlwater
+        #- landsat5-mlwater-ard
+        #- landsat7-ard
+        #- landsat7-wofs
+        #- landsat7-wofs-ard
+        #- landsat7-mlwater
+        #- landsat7-mlwater-ard
         - landsat8-ard
-        - landsat8-wofs
-        - landsat8-wofs-ard
-        - landsat8-mlwater
-        - landsat8-mlwater-ard
-        - s2-ard
-        - s2-wofs
-        - s2-
+        - landsat8
+        #- landsat8-wofs
+        #- landsat8-wofs-ard
+        #- landsat8-mlwater
+        #- landsat8-mlwater-ard
+        #- s2-ard
+        #- s2-wofs
+        #- s2-
 
 wait:
     cronString: "*/5 * * * *"
@@ -48,16 +49,18 @@ wait:
         - landsat8
 
 s3:
-    AccessKeyId: "something"
-    SecretKeyId: "something"
+    accessKeyId: ""
+    secretKeyId: ""
+    region: "eu-west-2"
     bucket: "public-eo-data"
-    endpoint: "https://s3.amazonaws.com"
-    imageryPath: "imagery"
-    stacPath: "stac"
+    endpoint: "https://s3-uk-1.sa-catapult.co.uk"
+    imageryPath: "common_sensing2"
+    stacPath: "stac_catalogs2/cs_stac"
 
 usgs:
-    username: "something"
-    password: "something"
+    username: ""
+    password: ""
+    apiendpoint: "https://espa.cr.usgs.gov/api/v1/"
 
 copernicus:
     username: "something"
@@ -75,22 +78,22 @@ s2:
     ardStacCollectionPathWofs: "s2-ard-wofs/stac"
 
 landsat8:
-    redisProcessedChannel: "landsat8-processed"
-    redisPendingChannel: "landsat8-pending"
-    ardStacCollectionPath8: "landsat8-ard/stac"
-    ardStacCollectionPath8Mlwater: "landsat8-ard-mlwater/stac"
-    ardStacCollectionPath8Wofs: "landsat8-ard-wofs/stac"
+    redisProcessedChannel: "jobLS"
+    redisPendingChannel: "landsat8_ordered"
+    ardStacCollectionPath8: "landsat_8/collection.json"
+    ardStacCollectionPath8Mlwater: ""
+    ardStacCollectionPath8Wofs: ""
 
 landsat7:
-    ardStacCollectionPath7: "landsat7-ard/stac"
-    ardStacCollectionPath7Mlwater: "landsat7-ard-mlwater/stac"
-    ardStacCollectionPath7Wofs: "landsat7-ard-wofs/stac"
+    ardStacCollectionPath7: ""
+    ardStacCollectionPath7Mlwater: ""
+    ardStacCollectionPath7Wofs: ""
 
 landsat5:
-    ardStacCollectionPath5: "landsat5-ard/stac"
-    ardStacCollectionPath5Mlwater: "landsat5-ard-mlwater/stac"
-    ardStacCollectionPath5Wofs: "landsat5-ard-wofs/stac"
+    ardStacCollectionPath5: ""
+    ardStacCollectionPath5Mlwater: ""
+    ardStacCollectionPath5Wofs: ""
 
 mlWater:
-    redisProcessedChannel: "mlwater-processed"
-    wofsSummaryPath: "wofs-summary"
+    redisProcessedChannel: ""
+    wofsSummaryPath: ""
