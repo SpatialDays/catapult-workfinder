@@ -37,15 +37,15 @@ Environment variables
 |S2_ARD_STAC_COLLECTION_PATH_WOFS|Path to collection.json for S2_ARD data WOFS on the S3 Bucket. Parent directory is S3_STAC_PATH.|
 |LANDSAT8_REDIS_PROCESSED_CHANNEL| The Redis channel in which wait_for_order process places imagery ready to download.|
 |LANDSAT8_REDIS_PENDING_CHANNEL| The Redis channel in which workfinder puts placed order id's to be checked for completion by wait_for_order.|
-|LANDSAT8_ARD_STAC_COLLECTION_PATH_8|STAC collection.json path for LANDSAT8 analyis ready data in S3_STAC_PATH.|
-|LANDSAT8_ARD_STAC_COLLECTION_PATH_8_MLWATER|STAC collection.json path for LANDSAT8 mlwater data in S3_STAC_PATH.|
-|LANDSAT8_ARD_STAC_COLLECTION_PATH_8_WOFS|STAC collection.json path for wofs data in S3_STAC_PATH.|
-|LANDSAT7_ARD_STAC_COLLECTION_PATH_7|STAC collection.json path for LANDSAT7 analysis ready data in S3_STAC_PATH.|
-|LANDSAT7_ARD_STAC_COLLECTION_PATH_7_MLWATER|STAC collection.json path for LANDSAT7 mlwater data in S3_STAC_PATH.|
-|LANDSAT7_ARD_STAC_COLLECTION_PATH_7_WOFS|STAC collection.json path for LANDSAT7 wofs data in S3_STAC_PATH.|
-|LANDSAT5_ARD_STAC_COLLECTION_PATH_5|STAC collection.json path for LANDSAT5 analysis ready data in S3_STAC_PATH.|
-|LANDSAT5_ARD_STAC_COLLECTION_PATH_5_MLWATER|STAC collection.json path for LANDSAT5 mlwater data in S3_STAC_PATH.|
-|LANDSAT5_ARD_STAC_COLLECTION_PATH_5_WOFS|STAC collection.json path for LANDSAT5 wofs data in S3_STAC_PATH.|
+|LANDSAT_ARD_STAC_COLLECTION_PATH_8|STAC collection.json path for LANDSAT8 analyis ready data in S3_STAC_PATH.|
+|LANDSAT_ARD_STAC_COLLECTION_PATH_8_MLWATER|STAC collection.json path for LANDSAT8 mlwater data in S3_STAC_PATH.|
+|LANDSAT_ARD_STAC_COLLECTION_PATH_8_WOFS|STAC collection.json path for wofs data in S3_STAC_PATH.|
+|LANDSAT_ARD_STAC_COLLECTION_PATH_7|STAC collection.json path for LANDSAT7 analysis ready data in S3_STAC_PATH.|
+|LANDSAT_ARD_STAC_COLLECTION_PATH_7_MLWATER|STAC collection.json path for LANDSAT7 mlwater data in S3_STAC_PATH.|
+|LANDSAT_ARD_STAC_COLLECTION_PATH_7_WOFS|STAC collection.json path for LANDSAT7 wofs data in S3_STAC_PATH.|
+|LANDSAT_ARD_STAC_COLLECTION_PATH_5|STAC collection.json path for LANDSAT5 analysis ready data in S3_STAC_PATH.|
+|LANDSAT_ARD_STAC_COLLECTION_PATH_5_MLWATER|STAC collection.json path for LANDSAT5 mlwater data in S3_STAC_PATH.|
+|LANDSAT_ARD_STAC_COLLECTION_PATH_5_WOFS|STAC collection.json path for LANDSAT5 wofs data in S3_STAC_PATH.|
 |ML_WATER_REDIS_PROCESSED_CHANNEL| |
 |ML_WATTER_WOFS_SUMMARY_PATH| |
 

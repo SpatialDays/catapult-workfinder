@@ -14,7 +14,7 @@ spec:
                 spec:
                     containers:
                         -   name: {{ $.Release.Name }}-wait-{{ . }}
-                            image: {{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+                            image: {{ $.Values.image.repository }}:{{ $.Values.image.tag }}
                             imagePullPolicy: {{ $.Values.image.pullPolicy }}
                             command:
                                 - python
@@ -33,29 +33,25 @@ spec:
                                 -   name: S3_ENDPOINT_URL
                                     value: {{ $.Values.s3.endpoint | quote }}
                                 -   name: AWS_ACCESS_KEY_ID
-                                    valueFrom:
-                                        secretKeyRef:
-                                            name: s3-secrets
-                                            key: access-key
+                                    value: {{ $.Values.s3.accessKeyId | quote }}
                                 -   name: AWS_SECRET_ACCESS_KEY
-                                    valueFrom:
-                                        secretKeyRef:
-                                            name: s3-secrets
-                                            key: secret-key
+                                    value: {{ $.Values.s3.secretKeyId | quote }}
+                                -   name: AWS_DEFAULT_REGION
+                                    value: {{ $.Values.s3.region | quote }}
                                 -   name: USGS_USERNAME
-                                    valueFrom:
-                                        secretKeyRef:
-                                            name: usgs-secrets
-                                            key: username
+                                    value: {{ $.Values.usgs.username | quote }}
                                 -   name: USGS_PASSWORD
-                                    valueFrom:
-                                        secretKeyRef:
-                                            name: usgs-secrets
-                                            key: password
+                                    value: {{ $.Values.usgs.password | quote }}
+                                -   name: USGS_API_ENDPOINT
+                                    value: {{ $.Values.usgs.apiendpoint | quote }}
                                 -   name: NATS_HOST
                                     value: {{ $.Values.nats.host | quote }}
                                 -   name: NATS_PORT
                                     value: {{ $.Values.nats.port | quote }}
+                                -   name: NATS_ITEM_NATS_CHANNEL
+                                    value: {{ $.Values.nats.itemChannel | quote }}
+                                -   name: NATS_COLLECTION_NATS_CHANNEL
+                                    value: {{ $.Values.nats.collectionChannel | quote }}
                                 -   name: REDIS_HOST
                                     value: {{ $.Values.redis.host | quote }}
                                 -   name: REDIS_PORT
@@ -82,28 +78,28 @@ spec:
                                     value: {{ $.Values.landsat8.redisProcessedChannel | quote }}
                                 -   name: LANDSAT8_REDIS_PENDING_CHANNEL
                                     value: {{ $.Values.landsat8.redisPendingChannel | quote }}
-                                -   name: LANDSAT8_ARD_STAC_COLLECTION_PATH_8
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_8
                                     value: {{ $.Values.landsat8.ardStacCollectionPath8 | quote }}
-                                -   name: LANDSAT8_ARD_STAC_COLLECTION_PATH_8_MLWATER
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_8_MLWATER
                                     value: {{ $.Values.landsat8.ardStacCollectionPath8Mlwater | quote }}
-                                -   name: LANDSAT8_ARD_STAC_COLLECTION_PATH_8_WOFS
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_8_WOFS
                                     value: {{ $.Values.landsat8.ardStacCollectionPath8Wofs | quote }}
-                                -   name: LANDSAT7_ARD_STAC_COLLECTION_PATH_7
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_7
                                     value: {{ $.Values.landsat7.ardStacCollectionPath7 | quote }}
-                                -   name: LANDSAT7_ARD_STAC_COLLECTION_PATH_7_MLWATER
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_7_MLWATER
                                     value: {{ $.Values.landsat7.ardStacCollectionPath7Mlwater | quote }}
-                                -   name: LANDSAT7_ARD_STAC_COLLECTION_PATH_7_WOFS
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_7_WOFS
                                     value: {{ $.Values.landsat7.ardStacCollectionPath7Wofs | quote }}
-                                -   name: LANDSAT5_ARD_STAC_COLLECTION_PATH_5
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_5
                                     value: {{ $.Values.landsat5.ardStacCollectionPath5 | quote }}
-                                -   name: LANDSAT5_ARD_STAC_COLLECTION_PATH_5_MLWATER
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_5_MLWATER
                                     value: {{ $.Values.landsat5.ardStacCollectionPath5Mlwater | quote }}
-                                -   name: LANDSAT5_ARD_STAC_COLLECTION_PATH_5_WOFS
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_5_WOFS
                                     value: {{ $.Values.landsat5.ardStacCollectionPath5Wofs | quote }}
                                 -   name: ML_WATER_REDIS_PROCESSED_CHANNEL
-                                    value: {{ $.Values.mlwater.redisProcessedChannel | quote }}
+                                    value: {{ $.Values.mlWater.redisProcessedChannel | quote }}
                                 -   name: ML_WATTER_WOFS_SUMMARY_PATH
-                                    value: {{ $.Values.mlwater.wofsSummaryPath | quote }}
+                                    value: {{ $.Values.mlWater.wofsSummaryPath | quote }}
 
                     restartPolicy: Never
 
