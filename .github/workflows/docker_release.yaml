@@ -9,6 +9,7 @@ on:
 jobs:
   workfinder:
     runs-on: ubuntu-latest
+    environment: DOCKERHUB_ENVIRONMENT
     steps:
       - name: Check Out Repo
         uses: actions/checkout@v2
