@@ -1,8 +1,10 @@
 name: publish docker containers
 
 on:
-  release:
-    types: [created]
+  push:
+    branches: ["main","master"]
+  pull_request:
+    branches: ["main","master"]
 
 jobs:
   workfinder:
