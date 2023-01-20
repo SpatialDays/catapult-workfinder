@@ -101,10 +101,14 @@ class S2(BaseWorkFinder):
         logger.info(f"Type of to_do_list: {type(to_do_list)}")
         logger.info(f"to_do_list: {to_do_list}")
         target_queue = get_config("S2", "REDIS_PROCESSED_CHANNEL")
+        imagery_path = get_config("S3", "IMAGERY_PATH")
+        region = get_config("APP", "REGION")
 
         for index, row in to_do_list.iterrows():
             # convert row to dict
             row_dict = row.to_dict()
+            row_dict['s3_bucket'] = get_config("S3", "BUCKET")
+            row_dict["s3_dir"] = f"{imagery_path}/{region.lower()}/sentinel_2/"
             self._redis.publish(target_queue, json.dumps(row_dict))
         self._redis.close()
 
