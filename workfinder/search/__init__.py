@@ -13,6 +13,7 @@ from pystac import Collection, STAC_IO
 
 from workfinder import get_config
 from workfinder.api.s3 import S3Api
+logger = logging.getLogger(__name__)
 
 
 def get_crs():
@@ -107,7 +108,7 @@ def get_ard_list(s3: S3Api, folder: str):
     for r in path_sizes:
 
         if r['name'].endswith(".yaml"):
-            url = r['name']
+            url = r['name'] # TODO: ?
             id = _extract_id_ard_path(url)
             df_result = df_result.append({'id': id, 'url': url}, ignore_index=True)
 
