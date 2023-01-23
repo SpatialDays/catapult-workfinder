@@ -14,11 +14,28 @@ from pystac import Collection, STAC_IO
 from workfinder import get_config
 from workfinder.api.s3 import S3Api
 logger = logging.getLogger(__name__)
-
+from shapely.wkt import loads
 
 def get_crs():
     crs = get_config("APP", "CRS")
     return {"init": crs}
+
+def get_aoi_alternative(region: str):
+    _fiji_multipolyon = """MULTIPOLYGON (((-175 -12,-179.99999 -12,-179.99999 -20,-175 -20,-175 -12)), ((175 -12,179.99999
+        -12,179.99999 -20,175 -20,175 -12))) """
+    _vanuatu_multipolyon = """MULTIPOLYGON (((166.5166630000001 -20.254169, 166.5166630000001 -13.070555, 170.2352290000001 -13.070555, 170.2352290000001
+     -20.254169, 166.5166630000001 -20.254169)))"""
+    _solomons_multipolyon = """MULTIPOLYGON (((155.507477 -11.845833, 155.507477 -5.293056, 167.2099610000001 -5.293056, 167.2099610000001
+     -11.845833, 155.507477 -11.845833)))"""
+
+    if region.lower() == "fiji":
+        return loads(_fiji_multipolyon)
+    elif region.lower() == "vanuatu":
+        return loads(_vanuatu_multipolyon)
+    elif region.lower() == "solomons":
+        return loads(_solomons_multipolyon)
+    else:
+        raise ValueError(f"Unknown region {region}")
 
 
 def get_aoi_wkt(s3: S3Api, region: str):

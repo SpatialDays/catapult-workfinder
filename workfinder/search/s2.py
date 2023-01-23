@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from workfinder import get_config, S3Api
-from workfinder.search import get_gpd_file, get_ard_list, get_aoi
+from workfinder.search import get_gpd_file, get_ard_list, get_aoi_alternative
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
@@ -26,12 +26,7 @@ class S2(BaseWorkFinder):
         self._s3.get_s3_connection()
 
         region = get_config("APP", "REGION")
-        # aoi = get_aoi(self._s3, region)
-        # logger.info(f"AOI for esa lookup is: {aoi}")
-        # logger.info(f"Typeof aoi: {type(aoi)}")
-        aoi_str = """MULTIPOLYGON (((-175 -12,-179.99999 -12,-179.99999 -20,-175 -20,-175 -12)), ((175 -12,179.99999
-        -12,179.99999 -20,175 -20,175 -12))) """
-        aoi = loads(aoi_str)
+        aoi = get_aoi_alternative(region)
         logger.info("Querying ESA API for Sentinel 2 data")
 
         world_granules = get_gpd_file(self._s3,
