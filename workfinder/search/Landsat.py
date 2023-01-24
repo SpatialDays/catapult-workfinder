@@ -53,8 +53,8 @@ class Landsat8(BaseWorkFinder):
             self._redis.close()
 
     def _get_rows_paths(self):
-        region = get_config("APP", "REGION")  # TODO: this should be a parameter
-        aoi = get_aoi(self._s3, region)  # Downloads the world borders file from S3
+        region = get_config("APP", "REGION")
+        aoi = get_aoi(self._s3, region)
         file_path = download_ancillary_file(self._s3, "WRS2_descending.geojson",
                                             "SatelliteSceneTiles/landsat_pr/WRS2_descending.geojson")  # Downloads the WRS2_descending.geojson file from S3
         world_granules = gpd.read_file(file_path)
@@ -90,10 +90,10 @@ class Landsat8(BaseWorkFinder):
         #         if "pixel_qa" not in order[k]["products"]:
         #             order[k]["products"] += ["pixel_qa"]
 
-        logging.info(json.dumps(order))
-        # POST https://espa.cr.usgs.gov/api/v1/order
-        # example payload
-        # "olitirs8_collection_2_l1": {"products": ["l1", "source_metadata", "pixel_qa"], "inputs": ["LC08_L1TP_071017_20140907_20200911_02_T1"]}, "format": "gtiff", "resampling_method": "cc", "note": "CS_Fiji_regular"}
+        # logging.info(json.dumps(order)) POST https://espa.cr.usgs.gov/api/v1/order example payload
+        # "olitirs8_collection_2_l1": {"products": ["l1", "source_metadata", "pixel_qa"], "inputs": [
+        # "LC08_L1TP_071017_20140907_20200911_02_T1"]}, "format": "gtiff", "resampling_method": "cc",
+        # "note": "CS_Fiji_regular"}
         resp = self._espa.call('order', verb='post', body=order)
         logging.info(f"created order id {resp['orderid']}")
         return resp['orderid']
