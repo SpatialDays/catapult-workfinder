@@ -1,19 +1,16 @@
 import json
 import logging
-import math
 
 import geopandas as gpd
-import numpy
 import pandas as pd
 from libcatapult.queues.base_queue import BaseQueue
 from sentinelsat import SentinelAPI
 
 from workfinder import get_config
 from workfinder.api.s3 import S3Api
-from workfinder.search import get_aoi_wkt, get_ard_list, get_aoi
-from workfinder.search.BaseWorkFinder import BaseWorkFinder
 from workfinder.search import get_gpd_file, get_ard_list, get_aoi
-import logging
+from workfinder.search.BaseWorkFinder import BaseWorkFinder
+
 logger = logging.getLogger(__name__)
 
 
@@ -43,7 +40,6 @@ class S1(BaseWorkFinder):
 
     def find_work_list(self):
         self._s3.get_s3_connection()
-
 
         region = get_config("APP", "REGION")
         aoi = get_aoi(None, region)
@@ -96,8 +92,7 @@ class S1(BaseWorkFinder):
     def find_already_done_list(self):
         region = get_config("APP", "REGION")
         imagery_path = get_config("S3", "IMAGERY_PATH")
-        return get_ard_list(self._s3 ,f"{imagery_path}/{region.lower()}/sentinel_1/")
-
+        return get_ard_list(self._s3, f"{imagery_path}/{region.lower()}/sentinel_1/")
 
     def submit_tasks(self, to_do_list: pd.DataFrame):
         self._redis.connect()
@@ -115,7 +110,6 @@ class S1(BaseWorkFinder):
             row_dict["s3_dir"] = f"{imagery_path}/{region.lower()}/sentinel_1/"
             self._redis.publish(target_queue, json.dumps(row_dict))
         self._redis.close()
-
 
 # def get_s1_asf_urls(s1_name_list: pd.Series):
 #     df = pd.DataFrame()

@@ -1,11 +1,10 @@
 import json
-from shapely.wkt import loads
+import logging
 
 import geopandas as gpd
 import pandas as pd
 from libcatapult.queues.base_queue import BaseQueue
 from sentinelsat import SentinelAPI
-import logging
 
 logger = logging.getLogger(__name__)
 
