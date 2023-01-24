@@ -83,7 +83,6 @@ class S2(BaseWorkFinder):
         esa_l1c_precise.drop(columns='endposition', inplace=True)
         esa_l1c_precise.drop(columns='ingestiondate', inplace=True)
         esa_l1c_precise = pd.DataFrame(esa_l1c_precise)
-        logger.info(f"Type of ESAL1C : {type(esa_l1c_precise)}")
         return esa_l1c_precise
 
     def find_already_done_list(self):
