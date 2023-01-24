@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from workfinder import get_config, S3Api
-from workfinder.search import get_gpd_file, get_ard_list, get_aoi_alternative
+from workfinder.search import get_gpd_file, get_ard_list, get_aoi
 from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 
@@ -26,8 +26,8 @@ class S2(BaseWorkFinder):
         self._s3.get_s3_connection()
 
         region = get_config("APP", "REGION")
-        aoi = get_aoi_alternative(region)
-        logger.info("Querying ESA API for Sentinel 2 data")
+        logger.info(f"Querying ESA API for Sentinel 2 data for {region} region")
+        aoi = get_aoi(None, region)
 
         world_granules = get_gpd_file(self._s3,
                                       "sentinel2_tiles_world.geojson",
@@ -51,7 +51,8 @@ class S2(BaseWorkFinder):
         res2 = self._esa_api.query(
             area=aoi,
             platformname='Sentinel-2',
-            producttype='S2MSI1C'
+            producttype='S2MSI1C',
+            limit=1
         )
         esa_l1c = self._esa_api.to_geodataframe(res2)
         esa_l1c['id'] = esa_l1c.title.apply(
