@@ -50,8 +50,8 @@ class S2(BaseWorkFinder):
         res2 = self._esa_api.query(
             area=aoi,
             platformname='Sentinel-2',
-            producttype='S2MSI1C',
-            limit=1
+            producttype='S2MSI1C'
+            
         )
         esa_l1c = self._esa_api.to_geodataframe(res2)
         esa_l1c['id'] = esa_l1c.title.apply(
