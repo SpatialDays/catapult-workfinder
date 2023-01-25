@@ -37,52 +37,27 @@ class S2(BaseWorkFinder):
         world_granules[region] = world_granules[world_granules[region]].any(1)
         region_s2_grans = world_granules[world_granules[region] == True]
 
-        # logger.info(f"Querying ESA for {len(region_s2_grans.index)} tiles")
-        # res = self._esa_api.query(
-        #     area=aoi,
-        #     platformname='Sentinel-2',
-        #     producttype='S2MSI1c',
-        #     limit=1
-        # )
-        #
-        # esa_l2a = self._esa_api.to_geodataframe(res) # expecting l2a, but calling l1c??
-
-        res2 = self._esa_api.query(
+        res = self._esa_api.query(
             area=aoi,
             platformname='Sentinel-2',
-            producttype='S2MSI1C'
-            
+            producttype='S2MSI2A'
         )
-        esa_l1c = self._esa_api.to_geodataframe(res2)
-        esa_l1c['id'] = esa_l1c.title.apply(
+        esa_result = self._esa_api.to_geodataframe(res)
+        esa_result['id'] = esa_result.title.apply(
             lambda x: f"{x.split('_')[0]}_{x.split('_')[1]}_{x.split('_')[2]}_{x.split('_')[5]}")
-        # esa_l2a['scenename'] = esa_l2a.title.apply(
-        #     lambda x: f"{x.split('_')[0]}_MSIL1C_{x.split('_')[2]}_{x.split('_')[5]}")
-        esa_l1c['granules'] = esa_l1c.identifier.str[39:44]
-        # esa_l2a['granules'] = esa_l2a.identifier.str[39:44]
-        #
-        esa_l1c_srt = esa_l1c.sort_values('beginposition', ascending=False)
-        # esa_l2a_srt = esa_l2a.sort_values('beginposition', ascending=False)
-        # esa_l1c_srt = esa_l1c_srt.loc[~esa_l1c_srt['scenename'].isin(esa_l2a_srt.scenename.values)]
-        #
-        esa_l1c_precise = esa_l1c_srt[esa_l1c_srt['granules'].isin(region_s2_grans.Name.values)]
-        # esa_l2a_precise = esa_l2a_srt[esa_l2a_srt['granules'].isin(region_s2_grans.Name.values)]
-        #
-        # result = pd.concat([esa_l1c_precise['scenename'], esa_l2a_precise['scenename']], axis=0)
-
-        logger.info(f"Found {len(esa_l1c_precise)} L1C scenes to process")
-        # save esa_l1c to .csv
-        # rename scenename column to id
-        #  esa_l1c.rename(columns={'scenename': 'id'}, inplace=True)
+        esa_result['granules'] = esa_result.identifier.str[39:44]
+        esa_result_sorted_by_position = esa_result.sort_values('beginposition', ascending=False)
+        esa_results_granule_filtered = esa_result_sorted_by_position[
+            esa_result_sorted_by_position['granules'].isin(region_s2_grans.Name.values)]
+        logger.info(f"Found {len(esa_results_granule_filtered)} L1C scenes to process")
         # drop the stuff that cant be jsonified
-        esa_l1c_precise.drop(columns='geometry', inplace=True)
-        esa_l1c_precise.drop(columns='datatakesensingstart', inplace=True)
-        esa_l1c_precise.drop(columns='generationdate', inplace=True)
-        esa_l1c_precise.drop(columns='beginposition', inplace=True)
-        esa_l1c_precise.drop(columns='endposition', inplace=True)
-        esa_l1c_precise.drop(columns='ingestiondate', inplace=True)
-        esa_l1c_precise = pd.DataFrame(esa_l1c_precise)
-        return esa_l1c_precise
+        esa_results_granule_filtered.drop(columns='geometry', inplace=True)
+        esa_results_granule_filtered.drop(columns='generationdate', inplace=True)
+        esa_results_granule_filtered.drop(columns='beginposition', inplace=True)
+        esa_results_granule_filtered.drop(columns='endposition', inplace=True)
+        esa_results_granule_filtered.drop(columns='ingestiondate', inplace=True)
+        esa_results_granule_filtered = pd.DataFrame(esa_results_granule_filtered)
+        return esa_results_granule_filtered
 
     def find_already_done_list(self):
         region = get_config("APP", "REGION")
@@ -105,7 +80,3 @@ class S2(BaseWorkFinder):
             row_dict["s3_dir"] = f"{imagery_path}/{region.lower()}/sentinel_2/"
             self._redis.publish(target_queue, json.dumps(row_dict))
         self._redis.close()
-
-
-def _row_mapping(row):
-    return {'id': row['scenename'], 'url': row['scenename']}

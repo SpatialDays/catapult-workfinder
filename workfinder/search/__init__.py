@@ -1,3 +1,5 @@
+# TODO: Move code out of __init__.py, should only be used to define a folder as a python module
+# see https://stackoverflow.com/a/73379400
 import json
 import logging
 import os
@@ -10,24 +12,28 @@ import geopandas as gpd
 import pandas as pd
 from libcatapult.storage.s3_tools import NoObjectError
 from pystac import Collection, STAC_IO
+from shapely.wkt import loads
 
 from workfinder import get_config
 from workfinder.api.s3 import S3Api
+
 logger = logging.getLogger(__name__)
-from shapely.wkt import loads
+
 
 def get_crs():
     crs = get_config("APP", "CRS")
     return {"init": crs}
+
 
 def get_aoi_wkt(s3: S3Api, region: str):
     value = get_aoi(region)
     return value.wkt
 
 
-def get_aoi(s3: S3Api = None, region:str = None):
+def get_aoi(s3: S3Api = None, region: str = None):
     # TODO: remove s3 api as it is not needed anymore
-    # Had to do this as S1 and S2 cannot take raw json from world borders as it is too big
+    # Had to do this as S1 and S2 cannot take raw json from world borders as it is too big, also envelope
+    # fails over antimeridian
 
     _fiji_multipolyon = """MULTIPOLYGON (((-175 -12,-179.99999 -12,-179.99999 -20,-175 -20,-175 -12)), ((175 -12,179.99999
         -12,179.99999 -20,175 -20,175 -12))) """
@@ -44,10 +50,6 @@ def get_aoi(s3: S3Api = None, region:str = None):
         return loads(_solomon_multipolyon)
     else:
         raise ValueError(f"Unknown region {region}")
-
-
-def get_world_borders(s3: S3Api):
-    return get_gpd_file(s3, "TM_WORLD_BORDERS.geojson", "TM_WORLD_BORDERS/TM_WORLD_BORDERS.geojson")
 
 
 def get_gpd_file(s3: S3Api, name, remote_path):
@@ -119,7 +121,7 @@ def get_ard_list(s3: S3Api, folder: str):
     for r in path_sizes:
 
         if r['name'].endswith(".yaml"):
-            url = r['name'] # TODO: ?
+            url = r['name']
             id = _extract_id_ard_path(url)
             df_result = df_result.append({'id': id, 'url': url}, ignore_index=True)
 

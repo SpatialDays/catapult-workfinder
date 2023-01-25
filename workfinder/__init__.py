@@ -1,4 +1,5 @@
-"""Top-level package for workfinder."""
+# TODO: Move code out of __init__.py, should only be used to define a folder as a python module
+# see https://stackoverflow.com/a/73379400
 
 __author__ = """Emily Selwood"""
 __email__ = 'Emily.selwood@sa.catapult.org.uk'
