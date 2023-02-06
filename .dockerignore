@@ -4,7 +4,6 @@ venv_windows/
 build/
 dist/
 *.egg-info/
-config.cfg 
 Dockerfile
 k8s
 charts
