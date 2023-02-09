@@ -1,4 +1,4 @@
-{{- range $.Values.workfinder.jobs }}
+{{- range $.Values.ardJobs.jobs }}
 ---
 
 apiVersion: batch/v1
@@ -6,7 +6,7 @@ kind: CronJob
 metadata:
     name: {{ $.Release.Name }}-{{ . }}
 spec:
-    schedule: {{ $.Values.workfinder.cronString | quote }}
+    schedule: {{ $.Values.ardJobs.cronString | quote }}
     concurrencyPolicy: Forbid
     jobTemplate:
         spec:
@@ -21,7 +21,7 @@ spec:
                                 - -m
                                 - workfinder.workfinder
                                 - --limit
-                                - {{ $.Values.workfinder.batchSize | quote}}
+                                - {{ $.Values.ardJobs.batchSize | quote}}
                                 - {{ . | upper | replace "-" "_" }}
                             env:
                                 -   name: APP_REGION
