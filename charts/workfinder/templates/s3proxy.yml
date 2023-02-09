@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s3-proxy-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: s3-proxy
+  template:
+    metadata:
+      labels:
+        app: s3-proxy
+    spec:
+      containers:
+        - name: s3proxy
+          image: andrewgaul/s3proxy:sha-b5d090d
+          env:
+            - name: S3PROXY_ENDPOINT
+              value: "http://0.0.0.0:80"
+            - name: S3PROXY_AUTHORIZATION
+              value: "none"
+            - name: JCLOUDS_PROVIDER
+              value: "azureblob"
+            - name: JCLOUDS_IDENTITY
+              value: {{ .Values.s3proxy.jcloudsIdentity | quote }}
+            - name: JCLOUDS_ENDPOINT
+              value: {{ .Values.s3proxy.jcloudsEndpoint | quote }}
+            - name: JCLOUDS_CREDENTIAL
+              value: {{ .Values.s3proxy.jcloudsCredential | quote }}
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: s3-proxy
+  name: s3-proxy
+spec:
+  selector:
+    app: s3-proxy
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
