@@ -24,28 +24,37 @@ workfinder:
     batchSize: 500
     cronString: "0 0 * * SAT"
     jobs:
-        #- landsat4-ard
-        #- landsat5-ard
-        #- landsat5-wofs
-        #- landsat5-wofs-ard
-        #- landsat5-mlwater
-        #- landsat5-mlwater-ard
-        #- landsat7-ard
-        #- landsat7-wofs
-        #- landsat7-wofs-ard
-        #- landsat7-mlwater
-        #- landsat7-mlwater-ard
         - s2
+        # - s1
+        - landsat8
+
+ardJobs:
+    batchSize: 500
+    cronString: "*/60 * * * *"
+    jobs:
         - s2-ard
         - landsat8-ard
-        - landsat8
-        #- landsat8-wofs
-        #- landsat8-wofs-ard
-        #- landsat8-mlwater
-        #- landsat8-mlwater-ard
-        #- s2-ard
-        #- s2-wofs
-        #- s2-
+        # - landsat4-ard
+        # - landsat5-ard
+        # - landsat5-wofs
+        # - landsat5-wofs-ard
+        # - landsat5-mlwater
+        # - landsat5-mlwater-ard
+        # - landsat7-ard
+        # - landsat7-wofs
+        # - landsat7-wofs-ard
+        # - landsat7-mlwater
+        # - landsat7-mlwater-ard
+        # - landsat8-ard
+        # - landsat8-wofs
+        # - landsat8-wofs-ard
+        # - landsat8-mlwater
+        # - landsat8-mlwater-ard
+        # - s2-ard
+        # - s2-wofs
+        # - s2-wofs-ard
+        # - s2-mlwater
+        # - s2-mlwater-ard
 
 wait:
     cronString: "*/5 * * * *"
@@ -80,12 +89,12 @@ s3proxy:
 # the values got hardcoded into other code
 
 s1:
-    redisProcessedChannel: "s1"
+    redisProcessedChannel: "jobS1"
     ardStacCollectionPath: "sentinel_1/collection.json"
     ardStacCollectionPathMlwater: "sentinel_1_MLWATER/collection.json"
 
 s2:
-    redisProcessedChannel: "s2"
+    redisProcessedChannel: "jobS2"
     ardStacCollectionPath: "sentinel_2/collection.json"
     ardStacCollectionPathMlwater: "sentinel_2_MLWATER/collection.json"
     ardStacCollectionPathWofs: "sentinel_2_WOFS/collection.json"

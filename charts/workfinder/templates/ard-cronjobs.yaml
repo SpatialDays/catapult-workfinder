@@ -1,0 +1,111 @@
+{{- range $.Values.workfinder.jobs }}
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+    name: {{ $.Release.Name }}-{{ . }}
+spec:
+    schedule: {{ $.Values.workfinder.cronString | quote }}
+    concurrencyPolicy: Forbid
+    jobTemplate:
+        spec:
+            template:
+                spec:
+                    containers:
+                        -   name: {{ $.Release.Name }}-{{ . }}
+                            image: {{ $.Values.image.repository }}:{{ $.Values.image.tag }}
+                            imagePullPolicy: {{ $.Values.image.pullPolicy }}
+                            command:
+                                - python
+                                - -m
+                                - workfinder.workfinder
+                                - --limit
+                                - {{ $.Values.workfinder.batchSize | quote}}
+                                - {{ . | upper | replace "-" "_" }}
+                            env:
+                                -   name: APP_REGION
+                                    value: {{ $.Values.region | title }}
+                                -   name: APP_CRS
+                                    value: {{ $.Values.app.crs | quote }}
+                                -   name: APP_TEMP_DIR
+                                    value: {{ $.Values.app.tempDir | quote }}
+                                -   name: S3_BUCKET
+                                    value: {{ $.Values.s3.bucket | quote }}
+                                -   name: S3_ENDPOINT
+                                    value: {{ $.Values.s3.endpoint | quote }}
+                                -   name: S3_IMAGERY_PATH
+                                    value: {{ $.Values.s3.imageryPath | quote }}
+                                -   name: S3_STAC_PATH
+                                    value: {{ $.Values.s3.stacPath | quote }}
+                                -   name: AWS_ACCESS_KEY_ID
+                                    value: {{ $.Values.s3.accessKeyId | quote }}
+                                -   name: AWS_SECRET_ACCESS_KEY
+                                    value: {{ $.Values.s3.secretKeyId | quote }}
+                                -   name: AWS_DEFAULT_REGION
+                                    value: {{ $.Values.s3.region | quote }}
+                                -   name: USGS_USERNAME
+                                    value: {{ $.Values.usgs.username | quote }}
+                                -   name: USGS_PASSWORD
+                                    value: {{ $.Values.usgs.password | quote }}
+                                -   name: USGS_API_ENDPOINT
+                                    value: {{ $.Values.usgs.apiendpoint | quote }}
+                                -   name: NATS_HOST
+                                    value: {{ $.Values.nats.host | quote }}
+                                -   name: NATS_PORT
+                                    value: {{ $.Values.nats.port | quote }}
+                                -   name: NATS_ITEM_NATS_CHANNEL
+                                    value: {{ $.Values.nats.itemChannel | quote }}
+                                -   name: NATS_COLLECTION_NATS_CHANNEL
+                                    value: {{ $.Values.nats.collectionChannel | quote }}
+                                -   name: REDIS_HOST
+                                    value: {{ $.Values.redis.host | quote }}
+                                -   name: REDIS_PORT
+                                    value: {{ $.Values.redis.port | quote }}
+                                -   name: COPERNICUS_USERNAME
+                                    value: {{ $.Values.copernicus.username | quote }}
+                                -   name: COPERNICUS_PASSWORD
+                                    value: {{ $.Values.copernicus.password | quote }}
+                                -   name: S1_REDIS_PROCESSED_CHANNEL
+                                    value: {{ $.Values.s1.redisProcessedChannel | quote }}
+                                -   name: S1_ARD_STAC_COLLECTION_PATH
+                                    value: {{ $.Values.s1.ardStacCollectionPath | quote }}
+                                -   name: S1_ARD_STAC_COLLECTION_PATH_MLWATER
+                                    value: {{ $.Values.s1.ardStacCollectionPathMlwater | quote }}
+                                -   name: S2_REDIS_PROCESSED_CHANNEL
+                                    value: {{ $.Values.s2.redisProcessedChannel | quote }}
+                                -   name: S2_ARD_STAC_COLLECTION_PATH
+                                    value: {{ $.Values.s2.ardStacCollectionPath | quote }}
+                                -   name: S2_ARD_STAC_COLLECTION_PATH_MLWATER
+                                    value: {{ $.Values.s2.ardStacCollectionPathMlwater | quote }}
+                                -   name: S2_ARD_STAC_COLLECTION_PATH_WOFS
+                                    value: {{ $.Values.s2.ardStacCollectionPathWofs | quote }}
+                                -   name: LANDSAT8_REDIS_PROCESSED_CHANNEL
+                                    value: {{ $.Values.landsat8.redisProcessedChannel | quote }}
+                                -   name: LANDSAT8_REDIS_PENDING_CHANNEL
+                                    value: {{ $.Values.landsat8.redisPendingChannel | quote }}
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_8
+                                    value: {{ $.Values.landsat8.ardStacCollectionPath8 | quote }}
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_8_MLWATER
+                                    value: {{ $.Values.landsat8.ardStacCollectionPath8Mlwater | quote }}
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_8_WOFS
+                                    value: {{ $.Values.landsat8.ardStacCollectionPath8Wofs | quote }}
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_7
+                                    value: {{ $.Values.landsat7.ardStacCollectionPath7 | quote }}
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_7_MLWATER
+                                    value: {{ $.Values.landsat7.ardStacCollectionPath7Mlwater | quote }}
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_7_WOFS
+                                    value: {{ $.Values.landsat7.ardStacCollectionPath7Wofs | quote }}
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_5
+                                    value: {{ $.Values.landsat5.ardStacCollectionPath5 | quote }}
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_5_MLWATER
+                                    value: {{ $.Values.landsat5.ardStacCollectionPath5Mlwater | quote }}
+                                -   name: LANDSAT_ARD_STAC_COLLECTION_PATH_5_WOFS
+                                    value: {{ $.Values.landsat5.ardStacCollectionPath5Wofs | quote }}
+                                -   name: ML_WATER_REDIS_PROCESSED_CHANNEL
+                                    value: {{ $.Values.mlWater.redisProcessedChannel | quote }}
+                                -   name: ML_WATTER_WOFS_SUMMARY_PATH
+                                    value: {{ $.Values.mlWater.wofsSummaryPath | quote }}
+                    restartPolicy: Never
+
+{{- end }}
