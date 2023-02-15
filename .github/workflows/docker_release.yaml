@@ -2,7 +2,7 @@ name: publish docker containers
 
 on:
   push:
-    branches: ["fiji","vanuatu","solomon"]
+    branches: ["main","master","dev"]
 #   pull_request:
 #     branches: ["main","master"]
 
@@ -35,7 +35,7 @@ jobs:
           context: ./
           file: Dockerfile
           push: true
-          tags: ivicamaticsd/catapult-workfinder:${{ env.BRANCH_NAME }}
+          tags: ivicamaticsd/catapult-workfinder:latest
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
