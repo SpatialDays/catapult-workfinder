@@ -12,7 +12,7 @@ nats:
     collectionChannel: "stac_creator.collection"
 
 redis:
-    host: "redis"
+    host: "ha-redis-redis-cluster"
     port: 6379
 
 app:
@@ -71,19 +71,19 @@ s3:
     stacPath: "stac_catalogs/cs_stac"
 
 usgs:
-    username: ""
-    password: ""
+    username: "ivica.matic@spatialdays.com"
+    password: "yhnAzx3EAEdBohaQ"
     apiendpoint: "https://espa.cr.usgs.gov/api/v1/"
 
 copernicus:
-    username: ""
-    password: ""
-
+    username: "ivica.matic"
+    password: "9JEidrgBnsifjKyD"
 
 s3proxy:
-    jcloudsIdentity: ""
-    jcloudsEndpoint: ""
-    jcloudsCredential: ""
+    jcloudsIdentity: "testingcommonsensing"
+    jcloudsEndpoint: "https://testingcommonsensing.blob.core.windows.net"
+    jcloudsCredential: "A6ORrO3FbTB/ryqUv9f7NGTsJgalNtPRHXtyJUsehVRB1BxTcE7eFpXKq4I7IAVV0v9r11QVEW0p+AStcazrDw=="
+
 
 # Do not change below this line, it was good idea, but 
 # the values got hardcoded into other code
