@@ -17,7 +17,8 @@ class BaseWorkFinder:
         done = self.find_already_done_list()
 
         if possible is None or possible.empty:
-            raise NoWorkException
+            # return empty dataframe
+            return pd.DataFrame({'id': []})
 
         df_possible = _to_pandas(possible)
         df_done = pd.DataFrame({'id': []})

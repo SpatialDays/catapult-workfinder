@@ -59,20 +59,18 @@ def main(process, limit):
     param = process.upper()
     if param in processors:
         logging.info(f"starting work search for {param}")
-        try:
-            work: pandas.core.frame.DataFrame = processors[param].find_new_work()
-            if limit == -1:
-                limit = 5000
-            if limit > work.shape[0]:
-                limit = work.shape[0]
-            if limit > 5000:
-                limit = 5000
-            logging.info(f"Processing limit is set to {limit}")
-            reduced_pandas_frame = work.iloc[0:limit]
-            processors[param].submit_tasks(reduced_pandas_frame)
-            logging.info(f"done work search for {param}")
-        except Exception as e:
-            logging.info(f"No work found for {param}")
+        work: pandas.core.frame.DataFrame = processors[param].find_new_work()
+        if limit == -1:
+            limit = 5000
+        if limit > work.shape[0]:
+            limit = work.shape[0]
+        if limit > 5000:
+            limit = 5000
+        logging.info(f"Processing limit is set to {limit}")
+        reduced_pandas_frame = work.iloc[0:limit]
+        processors[param].submit_tasks(reduced_pandas_frame)
+        logging.info(f"done work search for {param}")
+
     else:
         logging.error(f"unknown processor type {param}")
 
