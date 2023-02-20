@@ -35,7 +35,7 @@ jobs:
           context: ./
           file: Dockerfile
           push: true
-          tags: ivicamaticsd/catapult-workfinder:latest
+          tags: ivicamaticsd/catapult-workfinder:${{ env.BRANCH_NAME }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
