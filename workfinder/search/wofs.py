@@ -40,18 +40,18 @@ class BaseWofs(BaseWorkFinder):
         imagery_path = get_config("S3", "IMAGERY_PATH")
         return get_ard_list(self._s3, f"{imagery_path}/{region.lower()}/{self.get_target_name()}/")
 
-    def submit_tasks(self, to_do_list: pd.DataFrame):
-        region = get_config("APP", "REGION")
-        target_bucket = get_config("S3", "BUCKET")
-        target_queue = get_config("S2", "REDIS_PROCESSED_CHANNEL")
-        imagery_path = get_config("S3", "IMAGERY_PATH")
-        for r in to_do_list.tolist():
-            payload = {
-                "optical_yaml_path": r['url'],
-                "s3_bucket": target_bucket,
-                "s3_dir": f"{imagery_path}/{region.lower()}/{self.get_target_name()}/"
-            }
-            self._redis.publish(target_queue, json.dumps(payload))
+    # def submit_tasks(self, to_do_list: pd.DataFrame):
+    #     region = get_config("APP", "REGION")
+    #     target_bucket = get_config("S3", "BUCKET")
+    #     target_queue = get_config("S2", "REDIS_PROCESSED_CHANNEL")
+    #     imagery_path = get_config("S3", "IMAGERY_PATH")
+    #     for r in to_do_list.tolist():
+    #         payload = {
+    #             "optical_yaml_path": r['url'],
+    #             "s3_bucket": target_bucket,
+    #             "s3_dir": f"{imagery_path}/{region.lower()}/{self.get_target_name()}/"
+    #         }
+    #         self._redis.publish(target_queue, json.dumps(payload))
 
 
 class Landsat8Wofs(BaseWofs):
@@ -61,7 +61,27 @@ class Landsat8Wofs(BaseWofs):
     def get_target_name(self):
         return "landsat_8_wofs"
 
-
+    def submit_tasks(self, to_do_list: pd.DataFrame):
+        region = get_config("APP", "REGION")
+        target_bucket = get_config("S3", "BUCKET")
+        target_queue = "jobWater"
+        imagery_path = get_config("S3", "IMAGERY_PATH")
+        # for r in to_do_list.tolist():
+        #     payload = {
+        #         "optical_yaml_path": r['url'],
+        #         "s3_bucket": target_bucket,
+        #         "s3_dir": f"{imagery_path}/{region.lower()}/{self.get_target_name()}/"
+        #     }
+        #     self._redis.publish(target_queue, json.dumps(payload))
+        self._redis.connect()
+        for index, row in to_do_list.iterrows():
+            payload = {
+                "optical_yaml_path": row['url'],
+                "s3_bucket": target_bucket,
+                "s3_dir": f"{imagery_path}/{region.lower()}/{self.get_target_name()}/"
+            }
+            self._redis.publish(target_queue, json.dumps(payload))
+        self._redis.close()
 class Landsat7Wofs(BaseWofs):
     def get_source_sensor_name(self):
         return "landsat_7"
