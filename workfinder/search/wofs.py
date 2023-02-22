@@ -53,6 +53,8 @@ class BaseWofs(BaseWorkFinder):
     #         }
     #         self._redis.publish(target_queue, json.dumps(payload))
 
+    
+
 
 class Landsat8Wofs(BaseWofs):
     def get_source_sensor_name(self):
@@ -112,3 +114,28 @@ class Sentinel2Wofs(BaseWofs):
 
     def get_target_name(self):
         return "sentinel_2_wofs"
+    
+
+    def submit_tasks(self, to_do_list: pd.DataFrame):
+        print("Submitting tasks")
+        region = get_config("APP", "REGION")
+        target_bucket = get_config("S3", "BUCKET")
+        target_queue = "jobWater2"
+        imagery_path = get_config("S3", "IMAGERY_PATH")
+        # for r in to_do_list.tolist():
+        #     payload = {
+        #         "optical_yaml_path": r['url'],
+        #         "s3_bucket": target_bucket,
+        #         "s3_dir": f"{imagery_path}/{region.lower()}/{self.get_target_name()}/"
+        #     }
+        #     self._redis.publish(target_queue, json.dumps(payload))
+        self._redis.connect()
+        for index, row in to_do_list.iterrows():
+            payload = {
+                "optical_yaml_path": row['url'],
+                "s3_bucket": target_bucket,
+                "s3_dir": f"{imagery_path}/{region.lower()}/{self.get_target_name()}/"
+            }
+            self._redis.publish(target_queue, json.dumps(payload))
+            print(f"Pushed json: {json.dumps(payload)}")
+        self._redis.close()

@@ -15,7 +15,7 @@ from workfinder.search.s1 import S1
 from workfinder.search.s1_ard import S1ARD
 from workfinder.search.s2 import S2
 from workfinder.search.s2_ard import S2ARD
-from workfinder.search.wofs import Landsat8Wofs, Landsat7Wofs, Landsat5Wofs, Landsat4Wofs
+from workfinder.search.wofs import Landsat8Wofs, Landsat7Wofs, Landsat5Wofs, Landsat4Wofs,Sentinel2Wofs
 from workfinder.search.wofs_ard import Landsat8WofsArd, Landsat7WofsArd, Landsat5WofsArd, Sentinel2WofsArd
 
 # Mapping of processor names to objects.
@@ -47,6 +47,7 @@ processors = {
     "LANDSAT8_WOFS_ARD": Landsat8WofsArd(default_s3_api(), default_nats_api()),
     "LANDSAT7_WOFS_ARD": Landsat7WofsArd(default_s3_api(), default_nats_api()),
     "LANDSAT5_WOFS_ARD": Landsat5WofsArd(default_s3_api(), default_nats_api()),
+    "S2_WOFS": Sentinel2Wofs(default_s3_api(), default_redis_api()),
     "S2_WOFS_ARD": Sentinel2WofsArd(default_s3_api(), default_nats_api()),
 
 }
