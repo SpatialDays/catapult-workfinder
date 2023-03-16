@@ -1,0 +1,131 @@
+image:
+  repository: ivicamaticsd/catapult-workfinder
+  tag: dev
+  pullPolicy: Always
+
+region: "solomon"
+
+nats:
+    host: "ha-nats"
+    port: 4222
+    itemChannel: "stac_creator.item"
+    collectionChannel: "stac_creator.collection"
+
+redis:
+    host: "ha-redis-master"
+    port: 6379
+
+app:
+    region: "solomon"
+    crs: "EPSG:3832"
+    tempDir: "/tmp"
+
+workfinder:
+    batchSize: 1000
+    cronString: "0 0 * * SAT"
+    jobs:
+        - s2
+        - s1
+        - landsat8
+
+ardJobs:
+    batchSize: 1000
+    cronString: "*/60 * * * *"
+    jobs:
+        - s2-ard
+        - s1-ard
+        - landsat8-ard
+        # - landsat4-ard
+        # - landsat5-ard
+        # - landsat5-wofs
+        # - landsat5-wofs-ard
+        # - landsat5-mlwater
+        # - landsat5-mlwater-ard
+        # - landsat7-ard
+        # - landsat7-wofs
+        # - landsat7-wofs-ard
+        # - landsat7-mlwater
+        # - landsat7-mlwater-ard
+        # - landsat8-ard
+        # - landsat8-wofs
+        # - landsat8-wofs-ard
+        # - landsat8-mlwater
+        # - landsat8-mlwater-ard
+        # - s2-ard
+        # - s2-wofs
+        # - s2-wofs-ard
+        # - s2-mlwater
+        # - s2-mlwater-ard
+
+wait:
+    cronString: "*/5 * * * *"
+    jobs:
+        - landsat8
+
+s3:
+    accessKeyId: "not-needed-s3-proxy"
+    secretKeyId: "not-needed-s3-proxy"
+    region: "eu-west-2"
+    bucket: "ard-bucket"
+    endpoint: "http://s3-proxy:80"
+    imageryPath: "common_sensing"
+    stacPath: "stac_catalogs/cs_stac"
+
+usgs:
+    username: "ivica.matic@spatialdays.com"
+    password: ""
+    apiendpoint: "https://espa.cr.usgs.gov/api/v1/"
+
+copernicus:
+    username: "ivica.matic"
+    password: ""
+    
+# s3proxy:
+#     jcloudsIdentity: "cspreprodstrgacc"
+#     jcloudsEndpoint: "https://cspreprodstrgacc.blob.core.windows.net"
+#     jcloudsCredential: ""
+
+
+s3proxy:
+    jcloudsIdentity: "testingcommonsensing"
+    jcloudsEndpoint: "https://testingcommonsensing.blob.core.windows.net"
+    jcloudsCredential: ""
+
+
+# Do not change below this line, it was good idea, but 
+# the values got hardcoded into other code
+
+s1:
+    redisProcessedChannel: "jobS1"
+    ardStacCollectionPath: "sentinel_1/collection.json"
+    ardStacCollectionPathMlwater: "sentinel_1_MLWATER/collection.json"
+
+s2:
+    redisProcessedChannel: "jobS2"
+    ardStacCollectionPath: "sentinel_2/collection.json"
+    ardStacCollectionPathMlwater: "sentinel_2_MLWATER/collection.json"
+    ardStacCollectionPathWofs: "sentinel_2_WOFS/collection.json"
+
+landsat8:
+    redisProcessedChannel: "jobLS"
+    redisPendingChannel: "landsat8_ordered"
+    ardStacCollectionPath8: "landsat_8/collection.json"
+    ardStacCollectionPath8Mlwater: "landsat_8_MLWATER/collection.json"
+    ardStacCollectionPath8Wofs: "landsat_8_WOFS/collection.json"
+
+landsat7:
+    ardStacCollectionPath7: "landsat_7/collection.json"
+    ardStacCollectionPath7Mlwater: "landsat_7_MLWATER/collection.json"
+    ardStacCollectionPath7Wofs: "landsat_7_WOFS/collection.json"
+
+landsat5:
+    ardStacCollectionPath5: "landsat_5/collection.json"
+    ardStacCollectionPath5Mlwater: "landsat_5_MLWATER/collection.json"
+    ardStacCollectionPath5Wofs: "landsat_5_WOFS/collection.json"
+
+landsat4:
+    ardStacCollectionPath4: "landsat_4/collection.json"
+
+mlWater:
+    redisProcessedChannel: ""
+    wofsSummaryPath: ""

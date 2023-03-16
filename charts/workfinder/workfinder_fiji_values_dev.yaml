@@ -1,18 +1,18 @@
 image:
   repository: ivicamaticsd/catapult-workfinder
-  tag: latest
+  tag: dev
   pullPolicy: Always
 
 region: "fiji"
 
 nats:
-    host: "nats"
+    host: "ha-nats"
     port: 4222
     itemChannel: "stac_creator.item"
     collectionChannel: "stac_creator.collection"
 
 redis:
-    host: "ha-redis-redis-cluster"
+    host: "ha-redis-master"
     port: 6379
 
 app:
@@ -21,18 +21,19 @@ app:
     tempDir: "/tmp"
 
 workfinder:
-    batchSize: 500
+    batchSize: 1000
     cronString: "0 0 * * SAT"
     jobs:
         - s2
-        # - s1
+        - s1
         - landsat8
 
 ardJobs:
-    batchSize: 500
+    batchSize: 1000
     cronString: "*/60 * * * *"
     jobs:
         - s2-ard
+        - s1-ard
         - landsat8-ard
         # - landsat4-ard
         # - landsat5-ard
@@ -46,7 +47,7 @@ ardJobs:
         # - landsat7-mlwater
         # - landsat7-mlwater-ard
         # - landsat8-ard
-        # - landsat8-wofs
+        - landsat8-wofs
         # - landsat8-wofs-ard
         # - landsat8-mlwater
         # - landsat8-mlwater-ard
@@ -72,18 +73,23 @@ s3:
 
 usgs:
     username: "ivica.matic@spatialdays.com"
-    password: "yhnAzx3EAEdBohaQ"
+    password: ""
     apiendpoint: "https://espa.cr.usgs.gov/api/v1/"
 
 copernicus:
     username: "ivica.matic"
-    password: "9JEidrgBnsifjKyD"
+    password: ""
+
+# s3proxy:
+#     jcloudsIdentity: "cspreprodstrgacc"
+#     jcloudsEndpoint: "https://cspreprodstrgacc.blob.core.windows.net"
+#     jcloudsCredential: ""
+
 
 s3proxy:
     jcloudsIdentity: "testingcommonsensing"
     jcloudsEndpoint: "https://testingcommonsensing.blob.core.windows.net"
-    jcloudsCredential: "A6ORrO3FbTB/ryqUv9f7NGTsJgalNtPRHXtyJUsehVRB1BxTcE7eFpXKq4I7IAVV0v9r11QVEW0p+AStcazrDw=="
-
+    jcloudsCredential: ""
 
 # Do not change below this line, it was good idea, but 
 # the values got hardcoded into other code
