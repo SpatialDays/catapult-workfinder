@@ -92,6 +92,7 @@ class S1(BaseWorkFinder):
             row_dict = row.to_dict()
             row_dict['s3_bucket'] = get_config("S3", "BUCKET")
             row_dict["s3_dir"] = f"{imagery_path}/{region.lower()}/sentinel_1/"
+            row_dict["region"] = region
             self._redis.publish(target_queue, json.dumps(row_dict))
         self._redis.close()
 
