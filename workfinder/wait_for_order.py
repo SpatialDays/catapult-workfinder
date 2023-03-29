@@ -3,10 +3,11 @@ import logging
 import click
 
 from workfinder import default_redis_api, default_espa_api
-from workfinder.wait.landsat8 import Landsat8
+from workfinder.wait.landsat import Landsat8, Landsat7
 
 processors = {
-    "LANDSAT8": Landsat8(default_redis_api(), default_espa_api())
+    "LANDSAT8": Landsat8(default_redis_api(), default_espa_api()),
+    "LANDSAT7": Landsat7(default_redis_api(), default_espa_api())
 }
 
 
