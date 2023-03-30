@@ -18,6 +18,7 @@ landsat_registry = {
     'LC04': 'landsat_4',
     'LC05': 'landsat_5',
     'LT05': 'landsat_5',
+    'LT04': 'landsat_4',
     'LC07': 'landsat_7',
     'LC08': 'landsat_8',
 }
