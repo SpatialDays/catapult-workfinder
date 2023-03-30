@@ -67,15 +67,7 @@ class Landsat8(BaseWorkFinder):
         order = self._espa.call('available-products', body=dict(inputs=to_do_list['url'].tolist()))
 
         projection = {
-            'aea': {
-                'standard_parallel_1': 29.5,
-                'standard_parallel_2': 45.5,
-                'central_meridian': -96.0,
-                'latitude_of_origin': 23.0,
-                'false_easting': 0,
-                'false_northing': 0,
-                'datum': 'nad83'
-            }
+            'lonlat': None
         }
 
         order['format'] = 'gtiff'
@@ -155,16 +147,20 @@ class Landsat7(BaseWorkFinder):
     def _order_products(self, to_do_list: pd.DataFrame):
         order = self._espa.call('available-products', body=dict(inputs=to_do_list['url'].tolist()))
 
+        # projection = {
+        #     'aea': {
+        #         'standard_parallel_1': 29.5,
+        #         'standard_parallel_2': 45.5,
+        #         'central_meridian': -96.0,
+        #         'latitude_of_origin': 23.0,
+        #         'false_easting': 0,
+        #         'false_northing': 0,
+        #         'datum': 'nad83'
+        #     }
+        # }
+
         projection = {
-            'aea': {
-                'standard_parallel_1': 29.5,
-                'standard_parallel_2': 45.5,
-                'central_meridian': -96.0,
-                'latitude_of_origin': 23.0,
-                'false_easting': 0,
-                'false_northing': 0,
-                'datum': 'nad83'
-            }
+            'lonlat': None
         }
 
         order['format'] = 'gtiff'
@@ -244,16 +240,20 @@ class Landsat5(BaseWorkFinder):
     def _order_products(self, to_do_list: pd.DataFrame):
         order = self._espa.call('available-products', body=dict(inputs=to_do_list['url'].tolist()))
 
+        # projection = {
+        #     'aea': {
+        #         'standard_parallel_1': 29.5,
+        #         'standard_parallel_2': 45.5,
+        #         'central_meridian': -96.0,
+        #         'latitude_of_origin': 23.0,
+        #         'false_easting': 0,
+        #         'false_northing': 0,
+        #         'datum': 'nad83'
+        #     }
+        # }
+
         projection = {
-            'aea': {
-                'standard_parallel_1': 29.5,
-                'standard_parallel_2': 45.5,
-                'central_meridian': -96.0,
-                'latitude_of_origin': 23.0,
-                'false_easting': 0,
-                'false_northing': 0,
-                'datum': 'nad83'
-            }
+            'lonlat': None
         }
 
         order['format'] = 'gtiff'
@@ -333,18 +333,21 @@ class Landsat4(BaseWorkFinder):
     def _order_products(self, to_do_list: pd.DataFrame):
         order = self._espa.call('available-products', body=dict(inputs=to_do_list['url'].tolist()))
 
-        projection = {
-            'aea': {
-                'standard_parallel_1': 29.5,
-                'standard_parallel_2': 45.5,
-                'central_meridian': -96.0,
-                'latitude_of_origin': 23.0,
-                'false_easting': 0,
-                'false_northing': 0,
-                'datum': 'nad83'
-            }
-        }
+        # projection = {
+        #     'aea': {
+        #         'standard_parallel_1': 29.5,
+        #         'standard_parallel_2': 45.5,
+        #         'central_meridian': -96.0,
+        #         'latitude_of_origin': 23.0,
+        #         'false_easting': 0,
+        #         'false_northing': 0,
+        #         'datum': 'nad83'
+        #     }
+        # }
 
+        projection = {
+            'lonlat': None
+        }
         order['format'] = 'gtiff'
         order['resampling_method'] = 'cc'
         order['note'] = f"CS_{get_config('APP', 'REGION')}_regular"

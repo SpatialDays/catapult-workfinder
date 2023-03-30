@@ -10,6 +10,19 @@ from workfinder.api.espa_api import EspaAPI
 from workfinder.wait.basewaiter import BaseWaiter
 
 
+landsat_registry = {
+    'LE04': 'landsat_4',
+    'LE05': 'landsat_5',
+    'LE07': 'landsat_7',
+    'LE08': 'landsat_8',
+    'LC04': 'landsat_4',
+    'LC05': 'landsat_5',
+    'LT05': 'landsat_5',
+    'LT04': 'landsat_4',
+    'LC07': 'landsat_7',
+    'LC08': 'landsat_8',
+}
+
 class Landsat8(BaseWaiter):
 
     def __init__(self, q: BaseQueue, espa: EspaAPI):
@@ -36,16 +49,6 @@ class Landsat8(BaseWaiter):
         target_bucket = get_config("S3", "BUCKET")
         region = get_config("APP", "REGION")
 
-        landsat_registry = {
-            'LE04': 'landsat_4',
-            'LE05': 'landsat_5',
-            'LE07': 'landsat_7',
-            'LE08': 'landsat_8',
-            'LC04': 'landsat_4',
-            'LC05': 'landsat_5',
-            'LC07': 'landsat_7',
-            'LC08': 'landsat_8',
-        }
 
         for item in resp[order_id]:
             url = item.get('product_dload_url')
@@ -160,16 +163,6 @@ class Landsat5(BaseWaiter):
         target_bucket = get_config("S3", "BUCKET")
         region = get_config("APP", "REGION")
 
-        landsat_registry = {
-            'LE04': 'landsat_4',
-            'LE05': 'landsat_5',
-            'LE07': 'landsat_7',
-            'LE08': 'landsat_8',
-            'LC04': 'landsat_4',
-            'LC05': 'landsat_5',
-            'LC07': 'landsat_7',
-            'LC08': 'landsat_8',
-        }
 
         for item in resp[order_id]:
             url = item.get('product_dload_url')
@@ -222,16 +215,7 @@ class Landsat4(BaseWaiter):
         target_bucket = get_config("S3", "BUCKET")
         region = get_config("APP", "REGION")
 
-        landsat_registry = {
-            'LE04': 'landsat_4',
-            'LE05': 'landsat_5',
-            'LE07': 'landsat_7',
-            'LE08': 'landsat_8',
-            'LC04': 'landsat_4',
-            'LC05': 'landsat_5',
-            'LC07': 'landsat_7',
-            'LC08': 'landsat_8',
-        }
+
 
         for item in resp[order_id]:
             url = item.get('product_dload_url')
