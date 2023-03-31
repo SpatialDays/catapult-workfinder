@@ -2,7 +2,7 @@ import logging
 from abc import abstractmethod
 
 import pandas as pd
-from libcatapult.queues.nats import NatsQueue
+from libcatapult.queues.redis import RedisQueue
 
 from workfinder import get_config, S3Api
 from workfinder.search import get_ard_list, list_catalog
@@ -11,10 +11,10 @@ from workfinder.search.BaseWorkFinder import BaseWorkFinder
 
 class BaseArdWorkFinder(BaseWorkFinder):
 
-    def __init__(self, s3: S3Api, nats: NatsQueue):
+    def __init__(self, s3: S3Api, redis: RedisQueue):
         super().__init__()
         self.s3 = s3
-        self.nats = nats
+        self.redis = redis
 
     @abstractmethod
     def get_sensor_name(self):
@@ -30,22 +30,36 @@ class BaseArdWorkFinder(BaseWorkFinder):
 
     def submit_tasks(self, to_do_list: pd.DataFrame):
         # get nats connection
-        item_channel = get_config("NATS", "item_nats_channel")
-        collection_channel = get_config("NATS", "collection_nats_channel")
+        item_channel = get_config("REDIS", "STAC_ITEMS_LIST")
+        collection_channel = get_config("REDIS", "STAC_COLLECTIONS_LIST")
         stac_key = self.get_stac_key()
 
-        self.nats.connect()
-        self.nats.publish(collection_channel, stac_key)
+        # self.nats.connect()
+        # self.nats.publish(collection_channel, stac_key)
+
+        # for index, r in to_do_list.iterrows():
+        #     path = '/'.join(r['url'].split('/')[0:-1]) + '/'
+        #     logging.info(f"publishing {r['url']} as {path}")
+        #     self.nats.publish(item_channel, path)
+
+        # try:
+        #     self.nats.close()
+        # except:
+        #     pass
+
+        self.redis.connect()
+        self.redis.publish(collection_channel, stac_key)
 
         for index, r in to_do_list.iterrows():
             path = '/'.join(r['url'].split('/')[0:-1]) + '/'
             logging.info(f"publishing {r['url']} as {path}")
-            self.nats.publish(item_channel, path)
-
+            self.redis.publish(item_channel, path)
+        
         try:
-            self.nats.close()
+            self.redis.close()
         except:
             pass
+        
 
     def find_work_list(self):
         self.s3.get_s3_connection()

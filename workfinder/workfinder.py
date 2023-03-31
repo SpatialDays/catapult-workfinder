@@ -4,7 +4,7 @@ import logging
 import click
 import pandas
 
-from workfinder import default_s3_api, default_nats_api, default_redis_api, default_esa_api, \
+from workfinder import default_s3_api, default_redis_api, default_redis_api, default_esa_api, \
     default_espa_api
 from workfinder.search.Landsat import Landsat8, Landsat7, Landsat5, Landsat4
 from workfinder.search.landsat_ard import Landsat8ARD, Landsat4ARD, Landsat5ARD, Landsat7ARD
@@ -22,36 +22,36 @@ from workfinder.search.wofs_ard import Landsat8WofsArd, Landsat7WofsArd, Landsat
 # Note: Names must be upper case.
 processors = {
     "S1": S1(default_s3_api(), default_redis_api(), default_esa_api()),
-    "S1_ARD": S1ARD(default_s3_api(), default_nats_api()),
+    "S1_ARD": S1ARD(default_s3_api(), default_redis_api()),
     "S2": S2(default_s3_api(), default_redis_api(), default_esa_api()),
-    "S2_ARD": S2ARD(default_s3_api(), default_nats_api()),
+    "S2_ARD": S2ARD(default_s3_api(), default_redis_api()),
     "LANDSAT8": Landsat8(default_s3_api(), default_redis_api(), default_espa_api()),
-    "LANDSAT8_ARD": Landsat8ARD(default_s3_api(), default_nats_api()),
+    "LANDSAT8_ARD": Landsat8ARD(default_s3_api(), default_redis_api()),
     "LANDSAT7": Landsat7(default_s3_api(), default_redis_api(), default_espa_api()),
-    "LANDSAT7_ARD": Landsat7ARD(default_s3_api(), default_nats_api()),
+    "LANDSAT7_ARD": Landsat7ARD(default_s3_api(), default_redis_api()),
     "LANDSAT5": Landsat5(default_s3_api(), default_redis_api(), default_espa_api()),
-    "LANDSAT5_ARD": Landsat5ARD(default_s3_api(), default_nats_api()),
+    "LANDSAT5_ARD": Landsat5ARD(default_s3_api(), default_redis_api()),
     "LANDSAT4": Landsat4(default_s3_api(), default_redis_api(), default_espa_api()),
-    "LANDSAT4_ARD": Landsat4ARD(default_s3_api(), default_nats_api()),
+    "LANDSAT4_ARD": Landsat4ARD(default_s3_api(), default_redis_api()),
     "LANDSAT8_MLWATER": Landsat8MLWater(default_s3_api(), default_redis_api()),
     "LANDSAT7_MLWATER": Landsat7MLWater(default_s3_api(), default_redis_api()),
     "LANDSAT5_MLWATER": Landsat5MLWater(default_s3_api(), default_redis_api()),
     "S2_MLWATER": S2MLWater(default_s3_api(), default_redis_api()),
     "S1_MLWATER": S1MLWater(default_s3_api(), default_redis_api()),
-    "LANDSAT8_MLWATER_ARD": Landsat8MlWaterArd(default_s3_api(), default_nats_api()),
-    "LANDSAT7_MLWATER_ARD": Landsat7MlWaterArd(default_s3_api(), default_nats_api()),
-    "LANDSAT5_MLWATER_ARD": Landsat5MlWaterArd(default_s3_api(), default_nats_api()),
-    "S2_MLWATER_ARD": Sentinel2MlWaterArd(default_s3_api(), default_nats_api()),
-    "S1_MLWATER_ARD": Sentinel1MlWaterArd(default_s3_api(), default_nats_api()),
+    "LANDSAT8_MLWATER_ARD": Landsat8MlWaterArd(default_s3_api(), default_redis_api()),
+    "LANDSAT7_MLWATER_ARD": Landsat7MlWaterArd(default_s3_api(), default_redis_api()),
+    "LANDSAT5_MLWATER_ARD": Landsat5MlWaterArd(default_s3_api(), default_redis_api()),
+    "S2_MLWATER_ARD": Sentinel2MlWaterArd(default_s3_api(), default_redis_api()),
+    "S1_MLWATER_ARD": Sentinel1MlWaterArd(default_s3_api(), default_redis_api()),
     "LANDSAT8_WOFS": Landsat8Wofs(default_s3_api(), default_redis_api()),
     "LANDSAT7_WOFS": Landsat7Wofs(default_s3_api(), default_redis_api()),
     "LANDSAT5_WOFS": Landsat5Wofs(default_s3_api(), default_redis_api()),
     "LANDSAT4_WOFS": Landsat4Wofs(default_s3_api(), default_redis_api()),
-    "LANDSAT8_WOFS_ARD": Landsat8WofsArd(default_s3_api(), default_nats_api()),
-    "LANDSAT7_WOFS_ARD": Landsat7WofsArd(default_s3_api(), default_nats_api()),
-    "LANDSAT5_WOFS_ARD": Landsat5WofsArd(default_s3_api(), default_nats_api()),
+    "LANDSAT8_WOFS_ARD": Landsat8WofsArd(default_s3_api(), default_redis_api()),
+    "LANDSAT7_WOFS_ARD": Landsat7WofsArd(default_s3_api(), default_redis_api()),
+    "LANDSAT5_WOFS_ARD": Landsat5WofsArd(default_s3_api(), default_redis_api()),
     "S2_WOFS": Sentinel2Wofs(default_s3_api(), default_redis_api()),
-    "S2_WOFS_ARD": Sentinel2WofsArd(default_s3_api(), default_nats_api()),
+    "S2_WOFS_ARD": Sentinel2WofsArd(default_s3_api(), default_redis_api()),
 
 }
 
