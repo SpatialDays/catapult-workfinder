@@ -26,14 +26,15 @@ class Landsat8(BaseWorkFinder):
         df = _download_metadata("LANDSAT_OT_C2_L2.csv.gz",
                                         "https://landsat.usgs.gov/landsat/metadata_service/bulk_metadata_files/LANDSAT_OT_C2_L2.csv.gz")
         logging.info("finding scenes")
+        logging.info(rows_df["ROW"].values)
+        logging.info(rows_df["PATH"].values)
         df = df[
             (df['WRS Row'].isin(rows_df['ROW'].values) & df['WRS Path'].isin(rows_df['PATH'].values)) &
             (df['Satellite'] == 8) &
-            (df['Landsat Product Identifier L1'].str.contains('L1TP'))
+            (df['Landsat Product Identifier L2'].str.contains('L2SR'))
             ]
         logging.info("converting to required objects")
-        logging.info(df.columns)
-        logging.info(df.head(1))
+        logging.info(f"Found {df.size} scenes")
         df_result = df.apply(_apply_row_mapping, axis=1, result_type='expand')
         return df_result
 
@@ -373,10 +374,11 @@ class Landsat4(BaseWorkFinder):
 def _download_metadata(download_csv, download_link):
     logging.info("downloading landsat metadata")
     file_path = download_ancillary_http(download_csv, download_link)
+    logging.info(f"File path: {file_path}")
     df = pd.read_csv(file_path)
     logging.info(f"got metadata: {df.size}")
     return df
 
 
 def _apply_row_mapping(row):
-    return {'id': row['Landsat Product Identifier L1'][:25], 'url': row['Landsat Product Identifier L1']}
+    return {'id': row['Landsat Product Identifier L2'][:25], 'url': row['Landsat Product Identifier L2']}
