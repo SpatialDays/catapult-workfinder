@@ -111,7 +111,7 @@ class Landsat7(BaseWorkFinder):
         df = df[
             (df['WRS Row'].isin(rows_df['ROW'].values) & df['WRS Path'].isin(rows_df['PATH'].values)) &
             (df['Satellite'] == 7) &
-            (df['Landsat Product Identifier L1'].str.contains('L1TP'))
+            (df['Landsat Product Identifier L2'].str.contains('L2SR'))
             ]
         logging.info("converting to required objects")
         logging.info(df.columns)
@@ -204,7 +204,7 @@ class Landsat5(BaseWorkFinder):
         df = df[
             (df['WRS Row'].isin(rows_df['ROW'].values) & df['WRS Path'].isin(rows_df['PATH'].values)) &
             (df['Satellite'] == 'LANDSAT_5') &
-            (df['Landsat Product Identifier L1'].str.contains('L1TP'))
+            (df['Landsat Product Identifier L2'].str.contains('L2SR'))
             ]
         logging.info("converting to required objects")
         logging.info(df.columns)
@@ -297,7 +297,7 @@ class Landsat4(BaseWorkFinder):
         df = df[
             (df['WRS Row'].isin(rows_df['ROW'].values) & df['WRS Path'].isin(rows_df['PATH'].values)) &
             (df['Satellite'] == 'LANDSAT_4') &
-            (df['Landsat Product Identifier L1'].str.contains('L1TP'))
+            (df['Landsat Product Identifier L2'].str.contains('L2SR'))
             ]
         logging.info("converting to required objects")
         logging.info(df.columns)
